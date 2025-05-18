@@ -1,0 +1,12 @@
+{
+  "name": "@ai-chat/pc",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
