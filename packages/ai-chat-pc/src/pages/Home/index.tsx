@@ -13,7 +13,7 @@ const Home = () => {
 
   return (
     <>
-      <p>this is Home - {bears}</p>
+      <p className="font-bold">this is Home - {bears}</p>
       <div>
         <Bubble.List items={messages} />
         <Sender />

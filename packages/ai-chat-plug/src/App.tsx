@@ -1,5 +1,5 @@
 const App = () => {
-  return <div>ai-chat-plug</div>
+  return <div className="font-black">ai-chat-plug</div>
 }
 
 export default App
