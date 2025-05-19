@@ -1,0 +1,13 @@
+{
+  "name": "@ai-chat/plug",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
