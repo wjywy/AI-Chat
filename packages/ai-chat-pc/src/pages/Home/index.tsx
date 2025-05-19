@@ -10,6 +10,7 @@ const messages = [
 
 const Home = () => {
   const bears = useBearStore((state) => state.bears)
+  const name = 'zs'
 
   return (
     <>
