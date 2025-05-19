@@ -4,8 +4,8 @@ import useBearStore from '@pc/store/useBearStore'
 const messages = [
   {
     content: 'Hello, Ant Design X!',
-    role: 'user',
-  },
+    role: 'user'
+  }
 ]
 
 const Home = () => {

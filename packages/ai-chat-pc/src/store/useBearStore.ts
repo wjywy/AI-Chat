@@ -13,7 +13,7 @@ interface BearState {
 const useBearStore = create<BearState>((set) => {
   return {
     bears: 0,
-    increase: (by: number) => set((state) => ({ bears: state.bears + by })),
+    increase: (by: number) => set((state) => ({ bears: state.bears + by }))
   }
 })
 
