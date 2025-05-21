@@ -1,23 +1,46 @@
 import React from 'react'
-import { Radio } from 'antd'
-import type { RadioChangeEvent } from 'antd'
-import useLocaleStore, { type LocaleType } from '@pc/store/useLocaleStore'
+import { Dropdown, Button, Space } from 'antd'
+import { GlobalOutlined, DownOutlined } from '@ant-design/icons'
+import type { MenuProps } from 'antd'
+import useLocaleStore from '@pc/store/useLocaleStore'
+import type { LocaleType } from '@pc/store/useLocaleStore'
 import { useTranslation } from 'react-i18next'
 
 const LanguageSwitch: React.FC = () => {
   const { locale, changeLocale } = useLocaleStore()
   const { t } = useTranslation()
 
-  const handleChange = (e: RadioChangeEvent) => {
-    const value = e.target.value as LocaleType
-    changeLocale(value)
+  const handleMenuClick = (key: string) => {
+    changeLocale(key as LocaleType)
   }
 
+  const items: MenuProps['items'] = [
+    {
+      key: 'zh-CN',
+      label: <Space>{t('locale.zhCN')}</Space>
+    },
+    {
+      key: 'en-US',
+      label: <Space>{t('locale.enUS')}</Space>
+    }
+  ]
+
   return (
-    <Radio.Group value={locale} onChange={handleChange}>
-      <Radio.Button value="en-US">{t('locale.enUS')}</Radio.Button>
-      <Radio.Button value="zh-CN">{t('locale.zhCN')}</Radio.Button>
-    </Radio.Group>
+    <Dropdown
+      menu={{
+        items,
+        selectedKeys: [locale],
+        onClick: ({ key }) => handleMenuClick(key)
+      }}
+      trigger={['click']}>
+      <Button type="text" className="flex items-center">
+        <Space>
+          <GlobalOutlined />
+          {locale === 'zh-CN' ? t('locale.zhCN') : t('locale.enUS')}
+          <DownOutlined />
+        </Space>
+      </Button>
+    </Dropdown>
   )
 }
 

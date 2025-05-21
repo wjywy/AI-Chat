@@ -3,11 +3,9 @@ import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import dayjs from 'dayjs'
 
-// 导入语言包
 import enUS from './en-US'
 import zhCN from './zh-CN'
 
-// 导入 dayjs 语言包
 import 'dayjs/locale/zh-cn'
 
 const resources = {
@@ -35,7 +33,6 @@ i18n
     }
   })
 
-// 设置初始 dayjs 语言
 const currentLanguage = i18n.language
 dayjs.locale(currentLanguage === 'zh-CN' ? 'zh-cn' : 'en')
 

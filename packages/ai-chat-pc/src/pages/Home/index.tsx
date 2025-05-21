@@ -1,7 +1,7 @@
 import { Bubble, Sender } from '@ant-design/x'
 import useBearStore from '@pc/store/useBearStore'
 import { useTranslation } from 'react-i18next'
-
+import { Button } from 'antd'
 const messages = [
   {
     content: 'Hello, Ant Design X!',
@@ -22,6 +22,7 @@ const Home = () => {
           <Bubble.List items={messages} />
           <Sender placeholder={t('common.submit')} />
         </div>
+        <Button>theme chang test</Button>
       </div>
     </div>
   )

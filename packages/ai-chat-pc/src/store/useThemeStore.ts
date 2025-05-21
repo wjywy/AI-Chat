@@ -23,7 +23,6 @@ const useThemeStore = create<ThemeState>()(
   )
 )
 
-// 初始化主题
 export const initializeTheme = () => {
   const theme = useThemeStore.getState().theme
   document.documentElement.classList.toggle('dark', theme === 'dark')

@@ -2,7 +2,7 @@ export default {
   app: {
     title: 'AI 聊天',
     login: '登录',
-    home: '首页'
+    home: '主页'
   },
   common: {
     submit: '提交',
