@@ -9,5 +9,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/react-transition-group": "^4.4.12",
+    "react-transition-group": "^4.4.5"
+  }
 }

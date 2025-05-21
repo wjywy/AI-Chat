@@ -1,0 +1,22 @@
+
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow-x: hidden; /* 防止水平滚动 */
+  }
+  
+
+  /* 正常滑动 (左->右) */
+.page-slide-enter { opacity: 0; transform: translateX(100%); }
+.page-slide-enter-active { opacity: 1; transform: translateX(0%); transition: all 300ms; }
+.page-slide-exit { opacity: 1; transform: translateX(0%); }
+.page-slide-exit-active { opacity: 0; transform: translateX(-100%); transition: all 300ms; }
+
+/* 反向滑动 (右->左) */
+.page-slideReverse-enter { opacity: 0; transform: translateX(-100%); }
+.page-slideReverse-enter-active { opacity: 1; transform: translateX(0%); transition: all 300ms; }
+.page-slideReverse-exit { opacity: 1; transform: translateX(0%); }
+.page-slideReverse-exit-active { opacity: 0; transform: translateX(100%); transition: all 300ms; }

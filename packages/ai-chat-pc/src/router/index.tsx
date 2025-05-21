@@ -2,11 +2,16 @@ import { createBrowserRouter, createRoutesFromElements, Route } from 'react-rout
 import App from '../App'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
+import CreateAccount from '../pages/CreateAccount'
+import { AnimatedLayout } from '../components/PageTransition/PageTransition'
 
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     <Route path="/" element={<Home />} />
-    <Route path="/login" element={<Login />} />
+    <Route element={<AnimatedLayout />}>
+      <Route path="/login" element={<Login />} />
+      <Route path="/create-account" element={<CreateAccount />} />
+    </Route>
   </Route>
 )
 

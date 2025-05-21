@@ -6,41 +6,36 @@ import Divider from '../../components/Author/Divider'
 import SocialLoginButtons from '../../components/Author/SocialLoginButtons'
 import FooterLinks from '../../components/Author/FooterLinks'
 
-export default function Login() {
+export default function CreateAccount() {
   const [email, setEmail] = useState('')
 
   const handleEmailSubmit = (email: string) => {
     setEmail(email)
-    console.log('登录邮箱:', email)
-    // 这里添加登录逻辑
+    console.log('注册邮箱:', email)
+    // 这里添加注册逻辑
   }
 
   const handleGoogleLogin = () => {
-    console.log('Google登录')
-    // 实现Google登录
+    console.log('Google注册')
+    // 实现Google注册
   }
 
   const handleMicrosoftLogin = () => {
-    console.log('Microsoft登录')
-    // 实现Microsoft登录
+    console.log('Microsoft注册')
+    // 实现Microsoft注册
   }
 
   const handleAppleLogin = () => {
-    console.log('Apple登录')
-    // 实现Apple登录
-  }
-
-  const handlePhoneNumberLogin = () => {
-    console.log('手机号登录')
-    // 实现手机号登录
+    console.log('Apple注册')
+    // 实现Apple注册
   }
 
   return (
-    <AuthLayout title="登录">
+    <AuthLayout title="创建帐户">
       <div className="space-y-4">
         <EmailForm onSubmit={handleEmailSubmit} />
 
-        <AuthLink isLogin={true} />
+        <AuthLink isLogin={false} />
 
         <Divider />
 
@@ -48,8 +43,7 @@ export default function Login() {
           onGoogleLogin={handleGoogleLogin}
           onMicrosoftLogin={handleMicrosoftLogin}
           onAppleLogin={handleAppleLogin}
-          onPhoneNumberLogin={handlePhoneNumberLogin}
-          isLogin={true}
+          isLogin={false}
         />
       </div>
 
