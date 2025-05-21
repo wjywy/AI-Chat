@@ -58,6 +58,7 @@ export const useAuthStore = create<AuthState>()(
             token: 'mock-token',
             loading: false
           })
+          console.log('登录成功后状态', useAuthStore.getState())
         } catch (error) {
           set({
             loading: false,
@@ -95,7 +96,8 @@ export const useAuthStore = create<AuthState>()(
         set({
           isAuthenticated: false,
           user: null,
-          token: null
+          token: null,
+          error: null
         })
       },
       clearError: () => set({ error: null })
