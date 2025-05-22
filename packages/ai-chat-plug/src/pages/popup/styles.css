@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 弹出窗口样式 */
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.popup-container {
+  width: 320px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+.popup-header {
+  padding: 16px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.popup-footer {
+  padding: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+
+.popup-footer a {
+  color: #1677ff;
+  text-decoration: none;
+}
+
+.popup-footer a:hover {
+  text-decoration: underline;
+}
+
+/* 标签页样式 */
+.ant-tabs {
+  height: 100%;
+}
+
+.ant-tabs-content {
+  height: 100%;
+}
+
+.ant-tabs-tabpane {
+  height: 100%;
+  padding: 0 !important;
+}
+
+/* 消息列表样式 */
+.message-list {
+  padding: 16px;
+}
+
+/* 卡片样式 */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 输入框容器样式 */
+.chat-input-container {
+  border-top: 1px solid #f0f0f0;
+  background: white;
+  padding: 12px;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 动画效果 */
+.ant-tabs-tab {
+  transition: all 0.3s;
+}
+
+.ant-tabs-tab:hover {
+  color: #1677ff;
+}
+
+/* 气泡消息样式 */
+.bubble-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bubble-item {
+  max-width: 80%;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f5f5f5;
+}
+
+.bubble-item.user {
+  align-self: flex-end;
+  background: #e6f4ff;
+}
+
+/* 响应式调整 */
+@media (max-width: 480px) {
+  .popup-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+/* 设置项样式 */
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.setting-item .ant-typography {
+  margin: 0;
+}
+
+/* 提示文本样式 */
+.tip {
+  font-size: 12px;
+  color: #999;
+  padding: 8px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin-top: 8px;
+}
