@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/react-transition-group": "^4.4.12",
-    "react-transition-group": "^4.4.5"
+    "clsx": "^2.1.1",
+    "react-transition-group": "^4.4.5",
+    "tailwind-merge": "^3.3.0"
   }
 }
