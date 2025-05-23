@@ -1,25 +1,14 @@
-import { Bubble, Sender } from '@ant-design/x'
-import useBearStore from '@pc/store/useBearStore'
-
-const messages = [
-  {
-    content: 'Hello, Ant Design X!',
-    role: 'user'
-  }
-]
+import { Outlet } from 'react-router-dom'
+import ChatList from '../ChatList'
 
 const Home = () => {
-  const bears = useBearStore((state) => state.bears)
-  const name = 'zs'
-
   return (
-    <>
-      <p className="font-bold">this is Home - {bears}</p>
-      <div>
-        <Bubble.List items={messages} />
-        <Sender />
+    <div className="flex h-screen">
+      <ChatList />
+      <div className="flex-1">
+        <Outlet />
       </div>
-    </>
+    </div>
   )
 }
 

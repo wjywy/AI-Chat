@@ -2,10 +2,15 @@ import { createBrowserRouter, createRoutesFromElements, Route } from 'react-rout
 import App from '../App'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
+import Chat from '../pages/Chat'
+import Welcome from '../pages/Welcome'
 
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
-    <Route path="/" element={<Home />} />
+    <Route path="/" element={<Home />}>
+      <Route index element={<Welcome />} />
+      <Route path="chat/:chatId" element={<Chat />} />
+    </Route>
     <Route path="/login" element={<Login />} />
   </Route>
 )
