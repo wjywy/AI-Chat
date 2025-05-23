@@ -5,8 +5,14 @@ import Popup from './Popup'
 
 import './styles.css'
 
-// 渲染弹出窗口
-const root = createRoot(document.getElementById('popup-root')!)
+/**
+ * Popup页面应用启动文件
+ 
+ */
+
+const rootElement = document.getElementById('popup-root')
+
+const root = createRoot(rootElement!)
 
 root.render(
   <React.StrictMode>

@@ -1,41 +1,30 @@
-// 基础消息类型
-export type Message = {
-  content: string
-  role: 'user' | 'assistant'
-}
+/**
+ * 聊天功能专用类型定义
+ */
 
-// 对话模式
-export type ChatMode = 'chat' | 'read'
-
-// 常用常量
-export const CHAT_MODES = {
-  CHAT: 'chat',
-  READ: 'read'
-} as const
-
-// 模型选项
-export const MODEL_OPTIONS = [
-  {
-    value: 'gpt-4',
-    label: 'GPT-4'
-  },
-  {
-    value: 'gpt-3.5-turbo',
-    label: 'GPT-3.5'
-  }
-]
-
-// 模型定义
+// AI模型的详细信息
 export type Model = {
-  id: string
-  name: string
-  description: string
+  id: string // 模型唯一标识 (如: 'gpt-3.5-turbo')
+  name: string // 模型显示名称 (如: 'GPT-3.5')
+  description: string // 模型描述信息
 }
 
-// 聊天状态
-export type ChatState = {
-  messages: Message[]
-  selectedModel: string
-  mode: ChatMode
-  loading: boolean
+// 消息发送状态
+export type MessageStatus = 'sending' | 'sent' | 'failed'
+
+// 单个聊天会话的信息
+export type ChatSession = {
+  id: string // 会话唯一标识
+  title: string // 会话标题
+  createdAt: number // 创建时间戳
+  lastMessageAt: number // 最后一条消息时间戳
+}
+
+// 扩展的聊天消息 (在基础Message上增加状态)
+export type ChatMessage = {
+  id: string // 消息ID
+  role: 'user' | 'assistant' // 消息角色
+  content: string // 消息内容
+  timestamp: number // 发送时间
+  status?: MessageStatus // 发送状态 (可选)
 }

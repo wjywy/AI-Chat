@@ -17,7 +17,10 @@ export default defineConfig({
       // 启用对TypeScript的支持
       include: ['**/*.tsx', '**/*.ts']
     }),
-    crx({ manifest })
+    crx({
+      manifest,
+      browser: 'chrome'
+    })
   ],
   css: {
     postcss: {
