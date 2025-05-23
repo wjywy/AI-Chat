@@ -1,0 +1,61 @@
+@layer components {
+  /* 卡片基础样式 */
+  .card-base {
+    @apply bg-white rounded-lg shadow-md p-4;
+  }
+
+  /* 输入框基础样式 */
+  .input-base {
+    @apply w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+
+  /* 按钮基础样式 */
+  .btn-base {
+    @apply px-4 py-2 rounded-md transition-colors duration-200;
+  }
+
+  /* 主要按钮 */
+  .btn-primary {
+    @apply btn-base bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700;
+  }
+
+  /* 次要按钮 */
+  .btn-secondary {
+    @apply btn-base bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300;
+  }
+
+  /* 消息气泡基础样式 */
+  .message-bubble {
+    @apply max-w-[80%] p-3 rounded-lg;
+  }
+
+  /* 用户消息气泡 */
+  .message-bubble-user {
+    @apply message-bubble bg-blue-500 text-white ml-auto;
+  }
+
+  /* AI消息气泡 */
+  .message-bubble-ai {
+    @apply message-bubble bg-gray-100 text-gray-700;
+  }
+
+  /* 滚动容器 */
+  .scroll-container {
+    @apply overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent;
+  }
+
+  /* 弹性布局容器 */
+  .flex-container {
+    @apply flex flex-col h-full;
+  }
+
+  /* 标签页按钮 */
+  .tab-button {
+    @apply px-4 py-2 text-gray-600 hover:text-blue-500 transition-colors duration-200;
+  }
+
+  /* 活跃标签页 */
+  .tab-button-active {
+    @apply text-blue-500 border-b-2 border-blue-500;
+  }
+}

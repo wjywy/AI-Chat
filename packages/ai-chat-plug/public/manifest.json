@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "AI Chat",
+  "version": "1.0.0",
+  "description": "智能AI对话助手浏览器插件",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AI Chat"
+  },
+  "background": {
+    "service_worker": "src/background.ts"
+  },
+  "permissions": ["storage", "activeTab", "contextMenus", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.tsx"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

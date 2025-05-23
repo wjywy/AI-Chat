@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Chrome扩展弹窗尺寸设置 */
+html,
+body {
+  width: 380px;
+  height: 550px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #ffffff;
+}
+
+/* 弹窗根容器 */
+#popup-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 主容器确保填满整个弹窗 */
+.w-full.h-full {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 第三方组件样式覆盖 - Ant Design 特定样式 */
+.ant-tabs {
+  height: 100%;
+}
+
+.ant-tabs-content {
+  height: 100%;
+}
+
+.ant-tabs-tabpane {
+  height: 100%;
+  padding: 0 !important;
+}
+
+/* 滚动条美化  */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 复杂动画 - 比Tailwind更精确 */
+.ant-tabs-tab {
+  transition: all 0.3s;
+}
+
+.ant-tabs-tab:hover {
+  color: #1677ff;
+}
