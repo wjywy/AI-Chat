@@ -9,7 +9,7 @@ import useThemeStore from '@pc/store/useThemeStore'
 import ThemeToggle from '@pc/components/ThemeToggle'
 import LanguageSwitch from '@pc/components/LanguageSwitch'
 import { useAuthStore } from './store/useAuthStore'
-import { AuthService } from './services/authService'
+import { authService } from './services/authService'
 function App() {
   const { token, isAuthenticated } = useAuthStore()
   useEffect(() => {
@@ -18,13 +18,13 @@ function App() {
       const verifyToken = async () => {
         try {
           if (token !== 'mock-token') {
-            AuthService.logout()
+            authService.logout()
           }
           console.log('验证token:', token)
         } catch (error) {
           // 发生错误，注销用户
           console.error('token验证失败', error)
-          AuthService.logout()
+          authService.logout()
         }
       }
 
