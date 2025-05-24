@@ -3,26 +3,32 @@ import { useNavigate } from 'react-router-dom'
 import AuthLayout from '../../components/Author/AuthLayout'
 import RegisterForm from '../../components/Author/RegisterForm'
 import AuthLink from '../../components/Author/AuthLink'
-import Divider from '../../components/Author/Divider'
-import SocialLoginButtons from '../../components/Author/SocialLoginButtons'
+import AuthLanguageSwitch from '../../components/Author/AuthLanguageSwitch'
 import FooterLinks from '../../components/Author/FooterLinks'
-import { useAuthStore } from '../../store/useAuthStore'
-import { authService } from '../../services/authService'
+import { useUserStore } from '../../store/useUserStore'
+import { userService } from '../../services/userService'
+import type { RegisterParams, CaptchaParams } from '@pc/types/user'
 
 export default function CreateAccount() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const { error } = useAuthStore()
+  const { error } = useUserStore()
 
-  const handleRegisterSubmit = async (
-    userName: string,
-    password: string,
-    nickName: string,
-    captcha: string
-  ) => {
+  const handleRegisterSubmit = async ({
+    userName,
+    password,
+    nickName,
+    captcha
+  }: RegisterParams) => {
     setLoading(true)
     try {
-      await authService.createAccount(userName, password, nickName, captcha)
+      const params: RegisterParams = {
+        userName,
+        password,
+        nickName,
+        captcha
+      }
+      await userService.createAccount(params)
       // 注册成功后会自动登录并重定向到首页
       navigate('/', { replace: true })
     } catch (error) {
@@ -32,32 +38,33 @@ export default function CreateAccount() {
     }
   }
 
-  const handleSendCaptcha = async (address: string) => {
+  const handleSendCaptcha = async (params: CaptchaParams) => {
     try {
-      await authService.sendCaptcha(address)
+      await userService.sendCaptcha(params)
     } catch (error) {
       console.error('验证码发送失败', error)
     }
   }
 
-  const handleGoogleLogin = () => {
-    console.log('Google登录')
-    // 实现Google登录，成功后重定向
-  }
+  // const handleGoogleLogin = () => {
+  //   console.log('Google登录')
+  //   // 实现Google登录，成功后重定向
+  // }
 
-  const handleMicrosoftLogin = () => {
-    console.log('Microsoft登录')
-    // 实现Microsoft登录，成功后重定向
-  }
+  // const handleMicrosoftLogin = () => {
+  //   console.log('Microsoft登录')
+  //   // 实现Microsoft登录，成功后重定向
+  // }
 
-  const handleAppleLogin = () => {
-    console.log('Apple登录')
-    // 实现Apple登录，成功后重定向
-  }
+  // const handleAppleLogin = () => {
+  //   console.log('Apple登录')
+  //   // 实现Apple登录，成功后重定向
+  // }
 
   return (
     <AuthLayout title="创建账户">
       <div className="space-y-4">
+        <AuthLanguageSwitch />
         {error && <div className="text-red-500 text-sm">{error}</div>}
         <RegisterForm
           onSubmit={handleRegisterSubmit}
@@ -67,14 +74,7 @@ export default function CreateAccount() {
 
         <AuthLink isLogin={false} />
 
-        <Divider />
-
-        <SocialLoginButtons
-          onGoogleLogin={handleGoogleLogin}
-          onMicrosoftLogin={handleMicrosoftLogin}
-          onAppleLogin={handleAppleLogin}
-          isLogin={false}
-        />
+        {/* <Divider /> */}
       </div>
 
       <FooterLinks />

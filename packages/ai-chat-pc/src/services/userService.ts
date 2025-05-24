@@ -1,24 +1,17 @@
-import { authApi } from './api'
-import { useAuthStore } from '../store/useAuthStore'
+import { authApi } from '@pc/apis/user'
+import { useUserStore } from '@pc/store/useUserStore'
+import type { LoginParams, RegisterParams, CaptchaParams } from '@pc/types/user'
 
-export interface User {
-  id?: string
-  username?: string
-  email?: string
-  avatar?: string
-  nickName: string
-}
-
-export const authService = {
-  async login(userName: string, password: string) {
+export const userService = {
+  async login(params: LoginParams) {
     try {
-      useAuthStore.getState().setLoading(true)
-      useAuthStore.getState().setError(null)
+      useUserStore.getState().setLoading(true)
+      useUserStore.getState().setError(null)
 
-      const response = await authApi.login(userName, password)
+      const response = await authApi.login(params)
 
       if (response.code === 1) {
-        useAuthStore.setState({
+        useUserStore.setState({
           isAuthenticated: true,
           user: {
             nickName: response.data.nickName
@@ -31,7 +24,7 @@ export const authService = {
         throw new Error(response.msg || '登录失败')
       }
     } catch (error) {
-      useAuthStore.setState({
+      useUserStore.setState({
         loading: false,
         error: error instanceof Error ? error.message : '登录失败'
       })
@@ -39,21 +32,24 @@ export const authService = {
     }
   },
 
-  async createAccount(userName: string, password: string, nickName: string, captcha: string) {
+  async createAccount(params: RegisterParams) {
     try {
-      useAuthStore.getState().setLoading(true)
-      useAuthStore.getState().setError(null)
+      useUserStore.getState().setLoading(true)
+      useUserStore.getState().setError(null)
 
-      const response = await authApi.register(userName, password, nickName, captcha)
+      const response = await authApi.register(params)
 
       if (response.code === 1) {
         // 注册成功后，自动登录
-        await this.login(userName, password)
+        await this.login({
+          userName: params.userName,
+          password: params.password
+        })
       } else {
         throw new Error(response.msg || '注册失败')
       }
     } catch (error) {
-      useAuthStore.setState({
+      useUserStore.setState({
         loading: false,
         error: error instanceof Error ? error.message : '注册失败'
       })
@@ -61,20 +57,20 @@ export const authService = {
     }
   },
 
-  async sendCaptcha(address: string) {
+  async sendCaptcha(params: CaptchaParams) {
     try {
-      useAuthStore.getState().setLoading(true)
-      useAuthStore.getState().setError(null)
+      useUserStore.getState().setLoading(true)
+      useUserStore.getState().setError(null)
 
-      const response = await authApi.sendCaptcha(address)
+      const response = await authApi.sendCaptcha(params)
 
       if (response.code !== 1) {
         throw new Error(response.msg || '验证码发送失败')
       }
 
-      useAuthStore.getState().setLoading(false)
+      useUserStore.getState().setLoading(false)
     } catch (error) {
-      useAuthStore.setState({
+      useUserStore.setState({
         loading: false,
         error: error instanceof Error ? error.message : '验证码发送失败'
       })
@@ -83,7 +79,7 @@ export const authService = {
   },
 
   logout() {
-    useAuthStore.setState({
+    useUserStore.setState({
       isAuthenticated: false,
       user: null,
       token: null,

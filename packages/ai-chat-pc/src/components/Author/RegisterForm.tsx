@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import type { RegisterParams, CaptchaParams } from '@pc/types/user'
+import { useTranslation } from 'react-i18next'
 
 interface RegisterFormProps {
-  onSubmit: (userName: string, password: string, nickName: string, captcha: string) => void
-  onSendCaptcha: (address: string) => void
+  onSubmit: (params: RegisterParams) => void
+  onSendCaptcha: (params: CaptchaParams) => void
   buttonText?: string
   loading?: boolean
 }
@@ -13,6 +15,7 @@ export default function RegisterForm({
   buttonText = '注册',
   loading = false
 }: RegisterFormProps) {
+  const { t } = useTranslation()
   const [captchaSent, setCaptchaSent] = useState(false)
   const [countdown, setCountdown] = useState(0)
   const [address, setAddress] = useState('')
@@ -29,32 +32,32 @@ export default function RegisterForm({
 
     // 表单验证
     if (password.length < 6 || password.length > 20) {
-      setError('密码长度必须在6-20个字符之间')
+      setError(t('form.passwordLengthError'))
       return
     }
 
     if (nickName.length < 2 || nickName.length > 20) {
-      setError('昵称长度必须在2-20个字符之间')
+      setError(t('form.nicknameLengthError'))
       return
     }
 
-    onSubmit(userName, password, nickName, captcha)
+    onSubmit({ userName, password, nickName, captcha })
   }
 
   const handleSendCaptcha = async () => {
     setError(null)
     if (!address) {
-      setError('请输入邮箱地址')
+      setError(t('form.emailRequired'))
       return
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) {
-      setError('请输入有效的邮箱地址')
+      setError(t('form.emailInvalid'))
       return
     }
 
     try {
-      await onSendCaptcha(address)
+      await onSendCaptcha({ address })
       setCaptchaSent(true)
       let seconds = 60
       setCountdown(seconds)
@@ -67,7 +70,7 @@ export default function RegisterForm({
         }
       }, 1000)
     } catch (error) {
-      setError('验证码发送失败，请稍后重试')
+      setError(t('form.captchaSendFailed'))
     }
   }
 
@@ -83,7 +86,7 @@ export default function RegisterForm({
         <input
           type="email"
           name="userName"
-          placeholder="邮箱"
+          placeholder={t('form.email')}
           required
           disabled={loading}
           className="w-full px-4 py-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -94,7 +97,7 @@ export default function RegisterForm({
         <input
           type="password"
           name="password"
-          placeholder="密码 (6-20个字符)"
+          placeholder={t('form.passwordPlaceholder')}
           required
           minLength={6}
           maxLength={20}
@@ -106,7 +109,7 @@ export default function RegisterForm({
         <input
           type="text"
           name="nickName"
-          placeholder="昵称 (2-20个字符)"
+          placeholder={t('form.nicknamePlaceholder')}
           required
           minLength={2}
           maxLength={20}
@@ -118,7 +121,7 @@ export default function RegisterForm({
         <input
           type="text"
           name="captcha"
-          placeholder="验证码"
+          placeholder={t('form.captcha')}
           required
           disabled={loading}
           className="flex-grow px-4 py-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -128,7 +131,7 @@ export default function RegisterForm({
           onClick={handleSendCaptcha}
           disabled={captchaSent || loading}
           className="text-xs px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
-          {captchaSent ? `${countdown}秒后重试` : '发送验证码'}
+          {captchaSent ? t('form.captchaCountdown', { count: countdown }) : t('form.sendCaptcha')}
         </button>
       </div>
 
@@ -136,7 +139,7 @@ export default function RegisterForm({
         type="submit"
         disabled={loading}
         className="w-full py-3 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition disabled:bg-emerald-300 disabled:cursor-not-allowed">
-        {loading ? '处理中...' : buttonText}
+        {loading ? t('common.processing') : buttonText}
       </button>
     </form>
   )

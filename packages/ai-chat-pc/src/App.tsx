@@ -8,7 +8,20 @@ import '@pc/locales'
 import useThemeStore from '@pc/store/useThemeStore'
 import ThemeToggle from '@pc/components/ThemeToggle'
 import LanguageSwitch from '@pc/components/LanguageSwitch'
+import { useUserStore } from '@pc/store/useUserStore'
+import { useNavigate } from 'react-router-dom'
+
 function App() {
+  const { isAuthenticated, error } = useUserStore()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!isAuthenticated && error) {
+      navigate('/login')
+      useUserStore.setState({ error: null })
+    }
+  }, [isAuthenticated, error, navigate])
+
   const { antdLocale } = useLocaleStore()
   const { theme } = useThemeStore()
   const isDark = theme === 'dark'

@@ -1,24 +1,27 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 interface AuthLinkProps {
   isLogin: boolean
 }
 
 export default function AuthLink({ isLogin }: AuthLinkProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="text-center">
       {isLogin ? (
         <>
-          <span>没有帐户？</span>
+          <span>{t('auth.noAccount')}</span>
           <Link to="/create-account" className="text-emerald-500 hover:underline ml-1">
-            注册
+            {t('auth.register')}
           </Link>
         </>
       ) : (
         <>
-          <span>已经有帐户了？请</span>
+          <span>{t('auth.haveAccount')}</span>
           <Link to="/login" className="text-emerald-500 hover:underline ml-1">
-            登录
+            {t('auth.login')}
           </Link>
         </>
       )}
