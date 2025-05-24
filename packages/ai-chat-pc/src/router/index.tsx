@@ -8,6 +8,7 @@ import { PageTransition } from '../components/PageTransition/PageTransition'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom'
 import { WithPermission } from '../components/WithPermission/WithPermission'
 import { LayoutWithSidebar } from '../components/Layout/LayoutWithSidebar'
+import { ConversationDetail } from '../pages/ConversationDetail'
 
 // 统一的路由配置
 const routes = [
@@ -55,6 +56,7 @@ const routeElements = createRoutesFromElements(
         </WithPermission>
       }>
       <Route path="/" element={<Home />} />
+      <Route path="/conversation/:id" element={<ConversationDetail />} />
     </Route>
   </Route>
 )
