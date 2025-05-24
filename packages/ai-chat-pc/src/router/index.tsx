@@ -7,6 +7,7 @@ import CreateAccount from '../pages/CreateAccount'
 import { PageTransition } from '../components/PageTransition/PageTransition'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom'
 import { WithPermission } from '../components/WithPermission/WithPermission'
+import { LayoutWithSidebar } from '../components/Layout/LayoutWithSidebar'
 
 // 统一的路由配置
 const routes = [
@@ -34,6 +35,8 @@ const routes = [
 ]
 
 // 创建React Router路由
+// 新增布局组件
+// 修改路由配置
 const routeElements = createRoutesFromElements(
   <Route path="/" element={<App />}>
     <Route
@@ -42,16 +45,16 @@ const routeElements = createRoutesFromElements(
           <Outlet />
         </PageTransition>
       }>
-      <Route
-        path="/"
-        element={
-          <WithPermission>
-            <Home />
-          </WithPermission>
-        }
-      />
       <Route path="/login" element={<Login />} />
       <Route path="/create-account" element={<CreateAccount />} />
+    </Route>
+    <Route
+      element={
+        <WithPermission>
+          <LayoutWithSidebar />
+        </WithPermission>
+      }>
+      <Route path="/" element={<Home />} />
     </Route>
   </Route>
 )
