@@ -1,20 +1,29 @@
+import type { LoginParams } from '@pc/types/user'
+import { useTranslation } from 'react-i18next'
+
 interface EmailFormProps {
-  onSubmit: (userName: string, password: string) => void
+  onSubmit: (params: LoginParams) => void
   buttonText?: string
   loading?: boolean
+  usernamePlaceholder?: string
+  passwordPlaceholder?: string
 }
 
 export default function EmailForm({
   onSubmit,
   buttonText = '登录',
-  loading = false
+  loading = false,
+  usernamePlaceholder,
+  passwordPlaceholder
 }: EmailFormProps) {
+  const { t } = useTranslation()
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
     const userName = formData.get('userName') as string
     const password = formData.get('password') as string
-    onSubmit(userName, password)
+    onSubmit({ userName, password })
   }
 
   return (
@@ -23,7 +32,7 @@ export default function EmailForm({
         <input
           type="text"
           name="userName"
-          placeholder="用户名/邮箱"
+          placeholder={usernamePlaceholder || t('form.inputUsername')}
           required
           disabled={loading}
           className="w-full px-4 py-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -33,7 +42,7 @@ export default function EmailForm({
         <input
           type="password"
           name="password"
-          placeholder="密码"
+          placeholder={passwordPlaceholder || t('form.inputPassword')}
           required
           disabled={loading}
           className="w-full px-4 py-3 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -44,7 +53,7 @@ export default function EmailForm({
         type="submit"
         disabled={loading}
         className="w-full py-3 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition disabled:bg-emerald-300 disabled:cursor-not-allowed">
-        {loading ? '处理中...' : buttonText}
+        {loading ? t('common.processing') : buttonText}
       </button>
     </form>
   )

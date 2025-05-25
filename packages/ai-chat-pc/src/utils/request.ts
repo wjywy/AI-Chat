@@ -1,33 +1,76 @@
 import { message } from 'antd'
 import axios, { type AxiosError, type Method } from 'axios'
-
+import { userService } from '@pc/services/userService.ts'
+import { useUserStore } from '@pc/store/useUserStore'
+import router from '@pc/router'
 // 请求实例
 const instance = axios.create({
-  baseURL: '', // 基地址
+  baseURL: 'http://we4c8e87.natappfree.cc', // 基地址
   timeout: 5000
 })
+
+// 免token鉴权白名单
+const whiteList = ['/users/login', '/users/register', '/users/register-captcha']
+
+// token过期检查
+// const isTokenExpired = (token: string): boolean => {
+//   try {
+//     const base64Url = token.split('.')[1]
+//     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+//     const payload = JSON.parse(window.atob(base64))
+//     return payload.exp < Date.now() / 1000
+//   } catch (error) {
+//     console.error('Token解析错误', error)
+//     return true
+//   }
+// }
 
 // 请求拦截器
 instance.interceptors.request.use(
   function (config) {
-    // TODO：在发送请求之前校验token，并在请求头添加token
+    // 检查是否在白名单中
+    const isWhitelisted = whiteList.some((url) => config.url?.includes(url))
+
+    // 如果在白名单中，不需要token验证
+    if (isWhitelisted) {
+      return config
+    }
+
+    const { token } = useUserStore.getState()
+
+    // 检查token是否存在
+    // if (!token) {
+    //   message.error('请先登录再操作')
+    //   // 这里只设置错误状态，实际跳转由组件完成
+    //   // 避免在拦截器中直接操作路由
+    //   useUserStore.setState({ error: '请先登录' })
+    //   return Promise.reject(new Error('未登录'))
+    // }
+
+    // // 检查token是否过期
+    // if (isTokenExpired(token)) {
+    //   message.error('登录已过期，请重新登录')
+    //   // 清除登录状态
+    //   userService.logout()
+    //   return Promise.reject(new Error('登录已过期'))
+    // }
+
+    // 添加token到请求头
+    config.headers['Authorization'] = `${token}`
+
     return config
   },
   function (error) {
-    // 对请求错误做些什么
     return Promise.reject(error)
   }
 )
-
 // 添加响应拦截器
 instance.interceptors.response.use(
   function (response) {
-    // 2xx 范围内的状态码都会触发该函数
     // 注意，请求状态码!==业务状态码
     const { code, msg } = response.data
-
     // 业务统一状态码出错
-    if (code === 0) {
+    if (code === 400 || code === 401 || code === 404) {
       message.error(msg || '请求出错, 请稍后再试')
       return
     }
@@ -35,12 +78,22 @@ instance.interceptors.response.use(
     return response.data
   },
   function (error: AxiosError) {
-    // 401错误拦截(无感刷新...)
+    const { status } = error
+    if (status === 401) {
+      message.warning('当前登录状态有误, 请重新登录')
+      // 这里后续可以记录用户上次访问的路径，登录成功后再回跳回来，先直接replace
+      router.navigate('/login', {
+        replace: true
+      })
+    } else {
+      // 其他请求状态码出错
+      message.error(`error: ${status}`)
+    }
     return Promise.reject(error)
   }
 )
 
-type Data<T> = {
+export type Data<T> = {
   data: T
   code: string | number
   msg: string | null
@@ -52,10 +105,16 @@ type Data<T> = {
  * @param submitData 请求数据(可选)
  * @returns
  */
-export const request = <T>(url: string, method: Method = 'GET', submitData?: object) => {
+export const request = <T>(
+  url: string,
+  method: Method = 'GET',
+  submitData?: object,
+  options?: { signal?: AbortSignal }
+) => {
   return instance.request<any, Data<T>>({
     url,
     method,
-    [method.toUpperCase() === 'GET' ? 'params' : 'data']: submitData
+    [method.toUpperCase() === 'GET' ? 'params' : 'data']: submitData,
+    signal: options?.signal
   })
 }

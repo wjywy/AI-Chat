@@ -1,26 +1,17 @@
-import { Bubble, Sender } from '@ant-design/x'
-import useBearStore from '@pc/store/useBearStore'
 import { useTranslation } from 'react-i18next'
 import { Button } from 'antd'
-const messages = [
-  {
-    content: 'Hello, Ant Design X!',
-    role: 'user'
-  }
-]
+import AIRichInput from '@pc/components/AIRichInput'
 
 const Home = () => {
-  const bears = useBearStore((state) => state.bears)
-  const name = 'zs'
-
   const { t } = useTranslation()
+  console.log(JSON.parse(localStorage.getItem('auth-storage') || '')?.state)
+
   return (
     <div className="p-4">
       <div className="p-4 rounded-lg shadow">
         <h1 className="text-xl font-bold dark:text-white">{t('app.home')}</h1>
         <div className="mt-4">
-          <Bubble.List items={messages} />
-          <Sender placeholder={t('common.submit')} />
+          <AIRichInput />
         </div>
         <Button>theme chang test</Button>
       </div>

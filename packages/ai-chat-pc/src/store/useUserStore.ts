@@ -1,10 +1,10 @@
 // src/stores/authStore.ts
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User } from '../services/authService'
+import type { User } from '@pc/types/user'
 
 // 认证状态接口
-interface AuthState {
+interface UserState {
   // 状态
   isAuthenticated: boolean
   user: User | null
@@ -18,14 +18,16 @@ interface AuthState {
   clearError: () => void
 }
 
+const userState = JSON.parse(localStorage.getItem('auth-storage') || '{}')
+
 // 创建持久化存储的认证状态
-export const useAuthStore = create<AuthState>()(
+export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
       // 初始状态
-      isAuthenticated: false,
-      user: null,
-      token: null,
+      isAuthenticated: userState.isAuthenticated || false,
+      user: userState.user || {},
+      token: userState.token || null,
       loading: false,
       error: null,
 

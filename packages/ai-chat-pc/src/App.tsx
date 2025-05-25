@@ -8,29 +8,19 @@ import '@pc/locales'
 import useThemeStore from '@pc/store/useThemeStore'
 import ThemeToggle from '@pc/components/ThemeToggle'
 import LanguageSwitch from '@pc/components/LanguageSwitch'
-import { useAuthStore } from './store/useAuthStore'
-import { authService } from './services/authService'
-function App() {
-  const { token, isAuthenticated } = useAuthStore()
-  useEffect(() => {
-    // 如果有token但需要验证其有效性
-    if (token && isAuthenticated) {
-      const verifyToken = async () => {
-        try {
-          if (token !== 'mock-token') {
-            authService.logout()
-          }
-          console.log('验证token:', token)
-        } catch (error) {
-          // 发生错误，注销用户
-          console.error('token验证失败', error)
-          authService.logout()
-        }
-      }
+import { useUserStore } from '@pc/store/useUserStore'
+import { useNavigate } from 'react-router-dom'
 
-      verifyToken()
+function App() {
+  const { isAuthenticated, error } = useUserStore()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!isAuthenticated && error) {
+      navigate('/login')
+      useUserStore.setState({ error: null })
     }
-  }, [token, isAuthenticated])
+  }, [isAuthenticated, error, navigate])
 
   const { antdLocale } = useLocaleStore()
   const { theme } = useThemeStore()
