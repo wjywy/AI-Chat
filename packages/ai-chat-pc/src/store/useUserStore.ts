@@ -18,16 +18,16 @@ interface UserState {
   clearError: () => void
 }
 
-const userState = JSON.parse(localStorage.getItem('auth-storage') || '')?.state
+const userState = JSON.parse(localStorage.getItem('auth-storage') || '{}')
 
 // 创建持久化存储的认证状态
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
       // 初始状态
-      isAuthenticated: userState?.isAuthenticated || false,
-      user: userState?.user || {},
-      token: userState?.token || null,
+      isAuthenticated: userState.isAuthenticated || false,
+      user: userState.user || {},
+      token: userState.token || null,
       loading: false,
       error: null,
 

@@ -11,12 +11,12 @@ export const authApi = {
   },
 
   // 注册
-  register: (params: RegisterParams): Promise<Data<null>> => {
-    return request<null>('/users/register', 'POST', params)
+  register: (params: RegisterParams): Promise<Data<object>> => {
+    return request<object>('/users/register', 'POST', params)
   },
 
   // 发送验证码
-  sendCaptcha: (params: CaptchaParams): Promise<Data<null>> => {
-    return request<null>('/users/register-captcha', 'GET', params)
+  sendCaptcha: (params: CaptchaParams): Promise<Data<object>> => {
+    return request<object>('/users/register-captcha', 'GET', params)
   }
 }
