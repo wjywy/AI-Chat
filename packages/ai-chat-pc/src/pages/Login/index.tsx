@@ -9,6 +9,7 @@ import { useUserStore } from '../../store/useUserStore'
 import { userService } from '../../services/userService'
 import type { LoginParams } from '@pc/types/user'
 import { useTranslation } from 'react-i18next'
+import { message } from 'antd'
 
 export default function Login() {
   const { t } = useTranslation()
@@ -34,7 +35,7 @@ export default function Login() {
       navigate(from, { replace: true })
     } catch (error) {
       setError(error instanceof Error ? error.message : t('form.loginFailed'))
-      console.error('登录失败', error)
+      message.error('登录失败，请检查账号或密码是否有误')
     } finally {
       setLoading(false)
     }
@@ -45,11 +46,11 @@ export default function Login() {
       <div className="space-y-4">
         <AuthLanguageSwitch />
 
-        {(error || storeError) && (
+        {/* {(error || storeError) && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
             {error || storeError}
           </div>
-        )}
+        )} */}
         <EmailForm
           onSubmit={handleEmailSubmit}
           loading={loading}

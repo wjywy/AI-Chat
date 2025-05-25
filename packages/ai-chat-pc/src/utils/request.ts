@@ -69,6 +69,7 @@ instance.interceptors.response.use(
   function (response) {
     // 注意，请求状态码!==业务状态码
     const { code, msg } = response.data
+    console.log('响应拦截器', code, msg)
     // 业务统一状态码出错
     if (code === 400 || code === 401 || code === 404) {
       message.error(msg || '请求出错, 请稍后再试')
@@ -87,7 +88,7 @@ instance.interceptors.response.use(
       })
     } else {
       // 其他请求状态码出错
-      message.error(`error: ${status}`)
+      // message.error(`error: ${status}`)
     }
     return Promise.reject(error)
   }
