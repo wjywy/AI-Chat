@@ -55,7 +55,7 @@ instance.interceptors.request.use(
     }
 
     // 添加token到请求头
-    config.headers['Authorization'] = `Bearer ${token}`
+    config.headers['Authorization'] = `${token}`
 
     return config
   },
@@ -96,10 +96,16 @@ export type Data<T> = {
  * @param submitData 请求数据(可选)
  * @returns
  */
-export const request = <T>(url: string, method: Method = 'GET', submitData?: object) => {
+export const request = <T>(
+  url: string,
+  method: Method = 'GET',
+  submitData?: object,
+  options?: { signal?: AbortSignal }
+) => {
   return instance.request<any, Data<T>>({
     url,
     method,
-    [method.toUpperCase() === 'GET' ? 'params' : 'data']: submitData
+    [method.toUpperCase() === 'GET' ? 'params' : 'data']: submitData,
+    signal: options?.signal
   })
 }
