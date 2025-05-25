@@ -12,6 +12,7 @@ export function useConversationActions() {
     useConversationStore()
 
   const handleAddConversation = () => {
+    setSelectedId(null)
     navigate('/')
   }
 
