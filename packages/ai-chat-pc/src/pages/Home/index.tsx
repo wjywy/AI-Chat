@@ -4,6 +4,8 @@ import AIRichInput from '@pc/components/AIRichInput'
 
 const Home = () => {
   const { t } = useTranslation()
+  console.log(JSON.parse(localStorage.getItem('auth-storage') || '')?.state)
+
   return (
     <div className="p-4">
       <div className="p-4 rounded-lg shadow">
