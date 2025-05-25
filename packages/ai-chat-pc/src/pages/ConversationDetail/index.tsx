@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Bubble, Sender } from '@ant-design/x'
+import { Bubble } from '@ant-design/x'
 import { useTranslation } from 'react-i18next'
 import useConversationStore from '../../store/useConversationStore'
+import AIRichInput from '@pc/components/AIRichInput'
 
 type Conversation = {
-  id: number
+  id: string
   title: string
 }
 
@@ -23,7 +24,7 @@ export function ConversationDetail() {
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
 
   useEffect(() => {
-    const found = conversations.find((c) => c.id === Number(id))
+    const found = conversations.find((c) => c.id === id)
     setCurrentConversation(found || null)
   }, [conversations, id])
 
@@ -35,7 +36,8 @@ export function ConversationDetail() {
             <h1 className="text-xl font-bold dark:text-white">{currentConversation.title}</h1>
             <div className="mt-4">
               <Bubble.List items={messages} />
-              <Sender placeholder={t('common.submit')} />
+              {/* Replaced Sender with AIRichInput */}
+              <AIRichInput />
             </div>
           </>
         ) : (
