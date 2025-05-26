@@ -36,7 +36,6 @@ function App() {
     <ConfigProvider locale={antdLocale} theme={themeConfig}>
       <XProvider theme={themeConfig}>
         <div className="min-h-screen">
-          <LanguageSwitch />
           <Outlet />
           <ThemeToggle />
         </div>
