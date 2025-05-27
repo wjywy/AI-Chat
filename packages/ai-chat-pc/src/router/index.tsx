@@ -36,8 +36,6 @@ const routes = [
 ]
 
 // 创建React Router路由
-// 新增布局组件
-// 修改路由配置
 const routeElements = createRoutesFromElements(
   <Route path="/" element={<App />}>
     <Route
