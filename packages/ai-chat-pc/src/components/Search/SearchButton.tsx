@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect } from 'react'
+import { Sender } from '@ant-design/x'
+import useThemeStore from '@pc/store/useThemeStore'
 
 export const SearchButton = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [query, setQuery] = useState('')
   const modalRef = useRef<HTMLDivElement>(null)
+  const { theme } = useThemeStore()
+  const isDark = theme === 'dark'
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (query.trim()) {
-      console.log('搜索:', query.trim())
+  const handleSubmit = (value: string) => {
+    if (value.trim()) {
+      console.log('搜索:', value.trim())
     }
   }
 
-  // 点击外部关闭弹框
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -31,11 +32,14 @@ export const SearchButton = () => {
 
   return (
     <>
-      {/* 搜索按钮 */}
-      <div className="fixed top-4 right-4 z-50">
+      <div className="absolute top-4 right-4">
         <button
           onClick={() => setIsOpen(true)}
-          className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white hover:bg-gray-800 transition-colors">
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+            isDark
+              ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+              : 'bg-black text-white hover:bg-gray-800'
+          }`}>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -46,26 +50,32 @@ export const SearchButton = () => {
           </svg>
         </button>
       </div>
-
-      {/* 搜索弹框 - 页面中间偏上 */}
       {isOpen && (
-        <div className="fixed inset-0 z-40 flex items-start justify-center pt-32">
-          <div className="fixed inset-0 bg-black bg-opacity-20"></div>
-          <div ref={modalRef} className="relative w-1/2 bg-white rounded-lg shadow-xl border">
-            <div className="p-6">
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="搜索聊天记录..."
-                  className="w-full px-4 py-3 text-lg border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  autoFocus
-                />
-              </form>
+        <>
+          <div className="fixed inset-0 bg-gray-500/10 dark:bg-gray-900/30 z-[9998]" />
+          <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-20">
+            <div
+              ref={modalRef}
+              className={`w-[640px] rounded-xl border shadow-2xl overflow-hidden ${
+                isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+              }`}>
+              <Sender
+                placeholder="搜索聊天记录..."
+                onSubmit={handleSubmit}
+                styles={{
+                  input: {
+                    fontSize: '1.125rem',
+                    padding: '0.5rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    boxShadow: 'none',
+                    color: isDark ? '#e5e7eb' : 'inherit'
+                  }
+                }}
+              />
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   )
