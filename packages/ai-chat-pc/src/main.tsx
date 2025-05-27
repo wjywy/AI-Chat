@@ -1,6 +1,6 @@
 // import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
+import SearchChat from './pages/SearchChat'
 import './index.css'
 import router from './router'
 import './locales'
@@ -9,6 +9,4 @@ import './styles/index.css'
 // 初始化主题
 initializeTheme()
 
-createRoot(document.getElementById('root')!).render(
-  <RouterProvider router={router}></RouterProvider>
-)
+createRoot(document.getElementById('root')!).render(<SearchChat />)
