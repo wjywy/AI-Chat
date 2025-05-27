@@ -6,7 +6,7 @@ import { UserAvatar } from '@pc/components/Author/UserAvatar'
 import { SearchButton } from '../../components/Search'
 
 export function LayoutWithSidebar() {
-  console.log('LayoutWithSidebar rendering')
+  
   const [collapsed, setCollapsed] = useState(false)
 
   return (
