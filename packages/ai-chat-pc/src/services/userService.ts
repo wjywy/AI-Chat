@@ -12,7 +12,6 @@ export const userService = {
 
       if (response.code === 1) {
         useUserStore.setState({
-          isAuthenticated: true,
           user: {
             nickName: response.data.nickName
           },
@@ -20,6 +19,7 @@ export const userService = {
           loading: false,
           error: null
         })
+        useUserStore.getState().setAuthenticated(true)
       } else {
         throw new Error(response.msg || '登录失败')
       }
@@ -79,8 +79,8 @@ export const userService = {
   },
 
   logout() {
+    useUserStore.getState().setAuthenticated(false)
     useUserStore.setState({
-      isAuthenticated: false,
       user: null,
       token: null,
       error: null

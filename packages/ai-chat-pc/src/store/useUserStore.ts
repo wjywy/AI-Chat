@@ -3,10 +3,13 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@pc/types/user'
 
+// 使用Symbol作为私有键
+const PRIVATE_AUTH_KEY = Symbol('auth')
+
 // 认证状态接口
 interface UserState {
-  // 状态
-  isAuthenticated: boolean
+  [PRIVATE_AUTH_KEY]: boolean
+  get isAuthenticated(): boolean
   user: User | null
   token: string | null
   loading: boolean
@@ -16,6 +19,7 @@ interface UserState {
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   clearError: () => void
+  setAuthenticated: (value: boolean) => void
 }
 
 const userState = JSON.parse(localStorage.getItem('auth-storage') || '{}')
@@ -23,9 +27,13 @@ const userState = JSON.parse(localStorage.getItem('auth-storage') || '{}')
 // 创建持久化存储的认证状态
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
-      // 初始状态
-      isAuthenticated: userState.isAuthenticated || false,
+    (set, get) => ({
+      // 初始状态 - 私有
+      [PRIVATE_AUTH_KEY]: userState.isAuthenticated || false,
+      // 只读getter
+      get isAuthenticated() {
+        return get()[PRIVATE_AUTH_KEY]
+      },
       user: userState.user || {},
       token: userState.token || null,
       loading: false,
@@ -34,15 +42,16 @@ export const useUserStore = create<UserState>()(
       // 方法
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
-      clearError: () => set({ error: null })
+      clearError: () => set({ error: null }),
+      setAuthenticated: (value) => set({ [PRIVATE_AUTH_KEY]: value })
     }),
     {
-      name: 'auth-storage', // localStorage的键名
+      name: 'auth-storage',
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
         user: state.user,
         token: state.token
-      }) // 只持久化这些字段
+      })
     }
   )
 )
