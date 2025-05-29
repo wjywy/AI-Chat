@@ -47,12 +47,6 @@ export default function Login() {
     <AuthLayout title={t('app.login')}>
       <div className="space-y-4">
         <AuthLanguageSwitch />
-
-        {/* {(error || storeError) && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
-            {error || storeError}
-          </div>
-        )} */}
         <EmailForm
           onSubmit={handleEmailSubmit}
           loading={loading}

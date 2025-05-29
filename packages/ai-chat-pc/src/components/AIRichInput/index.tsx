@@ -5,6 +5,7 @@ import { LinkOutlined } from '@ant-design/icons'
 import { Attachments, Sender } from '@ant-design/x'
 import { Button, message, Spin, type GetRef } from 'antd'
 
+import { useChatStore, type ChatMessageProps } from '@pc/store/useChatStore'
 import { getCheckFileAPI, postFileChunksAPI, postMergeFileAPI } from '@pc/apis/chat'
 
 import type { chunkItemType } from '@pc/types/chat'
@@ -18,6 +19,8 @@ const AIRichInput = () => {
   const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
   const senderRef = useRef<GetRef<typeof Sender>>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
+
+  const { addMessage } = useChatStore()
 
   // 文件切片
   const chunkFun = (file: File) => {
@@ -162,6 +165,14 @@ const AIRichInput = () => {
     }
   }
 
+  const submitMessage = (message: string) => {
+    const ans: ChatMessageProps = {
+      content: message,
+      role: 'user'
+    }
+    addMessage(ans)
+  }
+
   const senderHeader = (
     <Sender.Header
       title="Attachments"
@@ -207,6 +218,7 @@ const AIRichInput = () => {
   return (
     <>
       <Sender
+        style={{ backgroundColor: 'white' }}
         header={senderHeader}
         prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
         onPasteFile={(_, files) => {
@@ -218,9 +230,7 @@ const AIRichInput = () => {
         }}
         submitType="shiftEnter"
         placeholder="请输入您的问题"
-        onSubmit={() => {
-          console.log('submit')
-        }}
+        onSubmit={(message) => submitMessage(message)}
       />
     </>
   )

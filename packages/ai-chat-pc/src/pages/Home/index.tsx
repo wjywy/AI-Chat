@@ -1,20 +1,14 @@
-import { Button } from 'antd'
-import { useTranslation } from 'react-i18next'
-
+import { ChatBubble } from '@pc/components/Bubble/bubble'
 import AIRichInput from '@pc/components/AIRichInput'
 
-const Home = () => {
-  const { t } = useTranslation()
-  console.log(JSON.parse(localStorage.getItem('auth-storage') || '')?.state)
+import './index.css' // 添加CSS导入
 
+const Home = () => {
   return (
-    <div className="p-4">
-      <div className="p-4 rounded-lg shadow">
-        <h1 className="text-xl font-bold dark:text-white">{t('app.home')}</h1>
-        <div className="mt-4">
-          <AIRichInput />
-        </div>
-        <Button>theme chang test</Button>
+    <div className="p-4 h-screen relative flex flex-col items-center overflow-hidden">
+      <ChatBubble></ChatBubble>
+      <div className="fixed bottom-0 w-1/2 z-50 chat-input" style={{ margin: '0 auto' }}>
+        <AIRichInput />
       </div>
     </div>
   )
