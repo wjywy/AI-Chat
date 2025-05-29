@@ -11,5 +11,14 @@
     }
 
     
+        
+    /* 添加 placeholder 样式 */
+    input::placeholder {
+        @apply text-gray-500;
+    }
+    
+    .dark input::placeholder {
+        @apply text-gray-300;
+    }
 
 }

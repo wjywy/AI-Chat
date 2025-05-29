@@ -1,5 +1,6 @@
-import { useTranslation } from 'react-i18next'
 import { Button } from 'antd'
+import { useTranslation } from 'react-i18next'
+
 import AIRichInput from '@pc/components/AIRichInput'
 
 const Home = () => {

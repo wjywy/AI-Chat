@@ -1,15 +1,11 @@
-// packages/ai-chat-pc/src/App.tsx
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
 import { XProvider } from '@ant-design/x'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ConfigProvider, theme as antdTheme } from 'antd'
-import useLocaleStore from '@pc/store/useLocaleStore'
+
 import '@pc/locales'
-import useThemeStore from '@pc/store/useThemeStore'
 import ThemeToggle from '@pc/components/ThemeToggle'
-import LanguageSwitch from '@pc/components/LanguageSwitch'
-import { useUserStore } from '@pc/store/useUserStore'
-import { useNavigate } from 'react-router-dom'
+import { useUserStore, useLocaleStore, useThemeStore } from '@pc/store'
 
 function App() {
   const { isAuthenticated, error } = useUserStore()
@@ -36,7 +32,6 @@ function App() {
     <ConfigProvider locale={antdLocale} theme={themeConfig}>
       <XProvider theme={themeConfig}>
         <div className="min-h-screen">
-          <LanguageSwitch />
           <Outlet />
           <ThemeToggle />
         </div>

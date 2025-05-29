@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { useUserStore } from '../../store/useUserStore'
+
+import { useUserStore } from '@pc/store/useUserStore'
 
 interface WithPermissionProps {
   children: React.ReactNode

@@ -20,7 +20,8 @@ interface ConversationState {
   updateConversation: (id: string, updates: Partial<Conversation>) => Promise<void>
 }
 
-const useConversationStore = create<ConversationState>()((set, get) => ({
+export const useConversationStore = create<ConversationState>()((set, get) => ({
+  // 初始状态
   selectedId: null,
   conversations: [],
   loading: false,
@@ -75,5 +76,3 @@ const useConversationStore = create<ConversationState>()((set, get) => ({
     }
   }
 }))
-
-export default useConversationStore

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Bubble } from '@ant-design/x'
 import { useTranslation } from 'react-i18next'
-import useConversationStore from '../../store/useConversationStore'
 import AIRichInput from '@pc/components/AIRichInput'
+import { useConversationStore } from '@pc/store'
 
 type Conversation = {
   id: string

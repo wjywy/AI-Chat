@@ -8,7 +8,7 @@ type ThemeState = {
   toggleTheme: () => void
 }
 
-const useThemeStore = create<ThemeState>()(
+export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       theme: 'light',
@@ -27,5 +27,3 @@ export const initializeTheme = () => {
   const theme = useThemeStore.getState().theme
   document.documentElement.classList.toggle('dark', theme === 'dark')
 }
-
-export default useThemeStore

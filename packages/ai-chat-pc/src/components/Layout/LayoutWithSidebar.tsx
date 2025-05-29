@@ -1,8 +1,10 @@
-import { Outlet } from 'react-router-dom'
-import { ConversationSidebar } from '../Conversation/ConversationSidebar'
 import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+
+import { SearchButton } from '@pc/components/Search/SearchButton'
 import { UserAvatar } from '@pc/components/Author/UserAvatar'
+import { ConversationSidebar } from '@pc/components/Conversation/ConversationSidebar'
 
 export function LayoutWithSidebar() {
   const [collapsed, setCollapsed] = useState(false)
@@ -24,7 +26,10 @@ export function LayoutWithSidebar() {
         </div>
         {!collapsed && <ConversationSidebar />}
       </div>
-      <div className="flex-1">
+      <div className="flex-1 relative overflow-hidden">
+        <div className="absolute top-0 right-0 z-50">
+          <SearchButton />
+        </div>
         <Outlet />
       </div>
     </div>

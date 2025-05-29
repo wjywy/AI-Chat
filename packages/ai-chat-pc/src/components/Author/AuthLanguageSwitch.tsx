@@ -1,7 +1,8 @@
 import { Button, Space } from 'antd'
-import { GlobalOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import useLocaleStore from '@pc/store/useLocaleStore'
+import { GlobalOutlined } from '@ant-design/icons'
+
+import { useLocaleStore } from '@pc/store'
 
 export default function AuthLanguageSwitch() {
   const { t } = useTranslation()
