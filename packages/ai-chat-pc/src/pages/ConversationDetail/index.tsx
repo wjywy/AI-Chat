@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Bubble, Sender } from '@ant-design/x'
 import { useTranslation } from 'react-i18next'
-import useConversationStore from '../../store/useConversationStore'
+
+import { useConversationStore } from '@pc/store'
 
 type Conversation = {
   id: number

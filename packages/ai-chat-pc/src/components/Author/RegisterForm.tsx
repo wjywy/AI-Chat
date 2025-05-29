@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import type { RegisterParams, CaptchaParams } from '@pc/types/user'
 import { useTranslation } from 'react-i18next'
+
+import type { RegisterParams, CaptchaParams } from '@pc/types/user'
 
 interface RegisterFormProps {
   onSubmit: (params: RegisterParams) => void

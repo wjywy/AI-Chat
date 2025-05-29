@@ -1,8 +1,9 @@
 import React from 'react'
-import { BulbOutlined, BulbFilled } from '@ant-design/icons'
 import { FloatButton, Tooltip } from 'antd'
-import useThemeStore from '@pc/store/useThemeStore'
 import { useTranslation } from 'react-i18next'
+import { BulbOutlined, BulbFilled } from '@ant-design/icons'
+
+import { useThemeStore } from '@pc/store'
 
 interface ThemeToggleProps {
   position?: {

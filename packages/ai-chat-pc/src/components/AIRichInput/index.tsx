@@ -1,11 +1,13 @@
-import { Attachments, Sender } from '@ant-design/x'
-import { useRef, useState } from 'react'
-import { Button, message, Spin, type GetRef } from 'antd'
 import SparkMD5 from 'spark-md5'
-import { LinkOutlined } from '@ant-design/icons'
-import type { chunkItemType } from '@pc/types/chat'
+import { useRef, useState } from 'react'
 import type { RcFile } from 'antd/es/upload'
+import { LinkOutlined } from '@ant-design/icons'
+import { Attachments, Sender } from '@ant-design/x'
+import { Button, message, Spin, type GetRef } from 'antd'
+
 import { getCheckFileAPI, postFileChunksAPI, postMergeFileAPI } from '@pc/apis/chat'
+
+import type { chunkItemType } from '@pc/types/chat'
 
 // 切片的大小
 const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5

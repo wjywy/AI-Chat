@@ -1,12 +1,12 @@
-import { Outlet } from 'react-router-dom'
-import { ConversationSidebar } from '../Conversation/ConversationSidebar'
 import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
+
+import { SearchButton } from '@pc/components/Search/SearchButton'
 import { UserAvatar } from '@pc/components/Author/UserAvatar'
-import { SearchButton } from '../../components/Search'
+import { ConversationSidebar } from '@pc/components/Conversation/ConversationSidebar'
 
 export function LayoutWithSidebar() {
-  
   const [collapsed, setCollapsed] = useState(false)
 
   return (

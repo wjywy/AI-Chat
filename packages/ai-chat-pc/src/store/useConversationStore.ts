@@ -17,7 +17,7 @@ interface ConversationState {
   updateConversation: (id: number, updates: Partial<Conversation>) => void
 }
 
-const useConversationStore = create<ConversationState>()((set, get) => ({
+export const useConversationStore = create<ConversationState>()((set, get) => ({
   // 初始状态
   selectedId: null,
   conversations: [
@@ -48,5 +48,3 @@ const useConversationStore = create<ConversationState>()((set, get) => ({
       conversations: get().conversations.map((c) => (c.id === id ? { ...c, ...updates } : c))
     })
 }))
-
-export default useConversationStore

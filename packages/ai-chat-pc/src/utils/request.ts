@@ -1,6 +1,5 @@
 import { message } from 'antd'
 import axios, { type AxiosError, type Method } from 'axios'
-import { userService } from '@pc/services/userService.ts'
 import { useUserStore } from '@pc/store/useUserStore'
 import router from '@pc/router'
 // 请求实例

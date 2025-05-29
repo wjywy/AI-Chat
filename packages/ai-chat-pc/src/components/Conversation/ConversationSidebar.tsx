@@ -1,6 +1,7 @@
 import { Button, Dropdown, Input } from 'antd'
-import { MoreOutlined, MessageOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { MoreOutlined, MessageOutlined } from '@ant-design/icons'
+
 import { useConversationActions } from './hooks/useConversationActions'
 
 export function ConversationSidebar() {

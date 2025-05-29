@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import useConversationStore from '../../../store/useConversationStore'
+import { useConversationStore } from '@pc/store'
 
 export function useConversationActions() {
   const navigate = useNavigate()
