@@ -5,33 +5,49 @@ import { useConversationStore } from '@pc/store'
 
 export function useConversationActions() {
   const navigate = useNavigate()
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
 
-  const { selectedId, conversations, setSelectedId, deleteConversation, updateConversation } =
-    useConversationStore()
+  const {
+    selectedId,
+    conversations,
+    setSelectedId,
+    deleteConversation,
+    updateConversation,
+    error,
+    fetchConversations
+  } = useConversationStore()
 
   const handleAddConversation = () => {
+    setSelectedId(null)
     navigate('/')
   }
 
-  const handleDelete = (id: number) => {
-    deleteConversation(id)
-    if (selectedId === id) {
-      navigate('/')
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteConversation(id)
+      if (selectedId === id) {
+        navigate('/')
+      }
+      message.success('会话删除成功')
+    } catch {
+      message.error(error || '删除会话失败')
     }
-    message.success('会话删除成功')
   }
 
-  const startEdit = (id: number, title: string) => {
+  const startEdit = (id: string, title: string) => {
     setEditingId(id)
     setEditValue(title)
   }
 
-  const handleEdit = (id: number) => {
-    updateConversation(id, { title: editValue })
-    setEditingId(null)
-    message.success('会话重命名成功')
+  const handleEdit = async (id: string) => {
+    try {
+      await updateConversation(id, { title: editValue })
+      setEditingId(null)
+      message.success('会话重命名成功')
+    } catch {
+      message.error(error || '更新会话失败')
+    }
   }
 
   return {
@@ -44,6 +60,7 @@ export function useConversationActions() {
     handleAddConversation,
     handleDelete,
     startEdit,
-    handleEdit
+    handleEdit,
+    fetchConversations
   }
 }

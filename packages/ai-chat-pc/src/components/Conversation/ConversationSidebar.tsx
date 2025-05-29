@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { MoreOutlined, MessageOutlined } from '@ant-design/icons'
 
 import { useConversationActions } from './hooks/useConversationActions'
+import { useEffect } from 'react'
 
 export function ConversationSidebar() {
   const navigate = useNavigate()
@@ -16,10 +17,16 @@ export function ConversationSidebar() {
     handleAddConversation,
     handleDelete,
     startEdit,
-    handleEdit
+    handleEdit,
+    fetchConversations
   } = useConversationActions()
 
-  const items = (id: number, title: string) => [
+  // 初始化时获取会话列表
+  useEffect(() => {
+    fetchConversations()
+  }, [fetchConversations])
+
+  const items = (id: string, title: string) => [
     {
       key: 'rename',
       label: '重命名',
@@ -42,7 +49,7 @@ export function ConversationSidebar() {
     }
   ]
 
-  const handleConversationClick = (id: number) => {
+  const handleConversationClick = (id: string) => {
     setSelectedId(id)
     navigate(`/conversation/${id}`)
   }
