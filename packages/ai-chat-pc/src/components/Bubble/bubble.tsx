@@ -9,7 +9,7 @@ import './bubble.css' // 添加CSS导入
 
 export const ChatBubble = () => {
   const listRef = useRef<GetRef<typeof Bubble.List>>(null)
-  const { messages, addMessage } = useChatStore()
+  const { messages } = useChatStore()
 
   const rolesAsObject: GetProp<typeof Bubble.List, 'roles'> = {
     ai: {

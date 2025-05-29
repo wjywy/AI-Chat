@@ -9,6 +9,7 @@ import { useChatStore, type ChatMessageProps } from '@pc/store/useChatStore'
 import { getCheckFileAPI, postFileChunksAPI, postMergeFileAPI } from '@pc/apis/chat'
 
 import type { chunkItemType } from '@pc/types/chat'
+import { DEFAULT_MESSAGE } from '@pc/constant'
 
 // 切片的大小
 const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5
@@ -20,7 +21,7 @@ const AIRichInput = () => {
   const senderRef = useRef<GetRef<typeof Sender>>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 
-  const { addMessage } = useChatStore()
+  const { messages, addMessage } = useChatStore()
 
   // 文件切片
   const chunkFun = (file: File) => {
@@ -215,23 +216,34 @@ const AIRichInput = () => {
     </Sender.Header>
   )
 
+  const showDefaultMessage = () => {
+    if (messages.length !== 0) {
+      return null
+    }
+
+    return <div className="text-2xl font-bold mb-10 text-center">{DEFAULT_MESSAGE}</div>
+  }
+
   return (
     <>
-      <Sender
-        style={{ backgroundColor: 'white' }}
-        header={senderHeader}
-        prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
-        onPasteFile={(_, files) => {
-          for (const file of files) {
-            // 生成base64临时图片路径
-            attachmentsRef.current?.upload(file)
-          }
-          setOpen(true)
-        }}
-        submitType="shiftEnter"
-        placeholder="请输入您的问题"
-        onSubmit={(message) => submitMessage(message)}
-      />
+      <div className={`fixed w-1/2 z-50 ${messages.length === 0 ? 'bottom-1/2' : 'bottom-8'}`}>
+        {showDefaultMessage()}
+        <Sender
+          style={{ backgroundColor: 'white' }}
+          header={senderHeader}
+          prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
+          onPasteFile={(_, files) => {
+            for (const file of files) {
+              // 生成base64临时图片路径
+              attachmentsRef.current?.upload(file)
+            }
+            setOpen(true)
+          }}
+          submitType="shiftEnter"
+          placeholder="请输入您的问题"
+          onSubmit={(message) => submitMessage(message)}
+        />
+      </div>
     </>
   )
 }
