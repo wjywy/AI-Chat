@@ -11,7 +11,7 @@ export interface ChatSession {
 // 定义会话消息类型
 export interface ChatMessage {
   id: string
-  role: 'user' | 'system' | 'assistant' // 根据实际情况调整role的可能值
+  role: 'user' | 'system' // 根据实际情况调整role的可能值
   content: string
   chatId: string
   createdAt: string

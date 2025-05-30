@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { MoreOutlined, MessageOutlined } from '@ant-design/icons'
 
 import { useConversationActions } from './hooks/useConversationActions'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { sessionApi } from '@pc/apis/session'
+import { type MessageProps, useChatStore } from '@pc/store'
 
 export function ConversationSidebar() {
   const navigate = useNavigate()
@@ -20,6 +22,8 @@ export function ConversationSidebar() {
     handleEdit,
     fetchConversations
   } = useConversationActions()
+
+  const { addMessage, messages } = useChatStore()
 
   // 初始化时获取会话列表
   useEffect(() => {
@@ -49,9 +53,25 @@ export function ConversationSidebar() {
     }
   ]
 
-  const handleConversationClick = (id: string) => {
+  const handleConversationClick = async (id: string) => {
+    // 点击会话时将id添加到url中
     setSelectedId(id)
     navigate(`/conversation/${id}`)
+
+    if (messages.get(id) !== undefined) {
+      return
+    }
+
+    // 获取该会话的所有历史消息
+    const { data } = await sessionApi.getChatHistory(id)
+
+    data.forEach((message) => {
+      const ans: MessageProps = {
+        content: message.content,
+        role: message.role
+      }
+      addMessage(ans)
+    })
   }
 
   return (

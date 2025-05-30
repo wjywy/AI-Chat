@@ -1,6 +1,6 @@
 import { request } from '@pc/utils'
 import type { Data } from '@pc/utils/request'
-import type { ChatSession } from '@pc/types/session'
+import type { ChatMessage, ChatSession } from '@pc/types/session'
 
 export const sessionApi = {
   // 新建会话
@@ -26,5 +26,10 @@ export const sessionApi = {
   // 删除会话接口
   deleteChatById: (id: string): Promise<Data<object>> => {
     return request<object>(`/chat/deleteChat/${id}`, 'GET')
+  },
+
+  // 获取该会话的所有历史消息
+  getChatHistory: (id: string): Promise<Data<ChatMessage[]>> => {
+    return request(`/chat/messages/${id}`)
   }
 }

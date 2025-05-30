@@ -237,9 +237,10 @@ const AIRichInput = () => {
     // 发送用户消息
     addMessage(ans)
 
-    if (idRef.current) {
+    console.log('idRef.current', idRef.current)
+    if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
-      createSSEAndSendMessage(idRef.current, message)
+      createSSEAndSendMessage(idRef.current || (selectedId as string), message)
     }
   }
 
