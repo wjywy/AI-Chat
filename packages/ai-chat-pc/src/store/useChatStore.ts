@@ -1,20 +1,28 @@
 import { create } from 'zustand'
+import { useConversationStore } from './useConversationStore'
+import type { Role } from '@pc/types/common'
 
-export interface ChatMessageProps {
+export type MessageProps = {
   content: string
-  role: 'user' | 'system'
+  role: Role
 }
 
+export type ChatMessageProps = Map<string, MessageProps[]>
+
 export interface ChatStoreProps {
-  messages: ChatMessageProps[]
-  addMessage: (message: ChatMessageProps) => void
+  messages: ChatMessageProps
+  addMessage: ({ content, role }: MessageProps) => void
 }
 
 export const useChatStore = create<ChatStoreProps>((set, get) => ({
-  messages: [],
-  addMessage: (message: ChatMessageProps) => {
+  messages: new Map(),
+  addMessage: ({ content, role }: MessageProps) => {
+    const selectedId = useConversationStore.getState().selectedId // 获取实时的 selectedId
     set((state) => ({
-      messages: [...state.messages, message]
+      messages: state.messages.set(selectedId as string, [
+        ...(state.messages.get(selectedId as string) || []),
+        { content, role }
+      ])
     }))
   }
 }))

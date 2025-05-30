@@ -3,13 +3,14 @@ import { Bubble } from '@ant-design/x'
 import type { GetProp, GetRef } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 
-import { useChatStore } from '@pc/store/useChatStore'
+import { useChatStore, useConversationStore } from '@pc/store'
 
 import './bubble.css' // 添加CSS导入
 
 export const ChatBubble = () => {
   const listRef = useRef<GetRef<typeof Bubble.List>>(null)
   const { messages } = useChatStore()
+  const { selectedId } = useConversationStore()
 
   const rolesAsObject: GetProp<typeof Bubble.List, 'roles'> = {
     ai: {
@@ -26,6 +27,8 @@ export const ChatBubble = () => {
     }
   }
 
+  const chatMessage = selectedId ? messages.get(selectedId) : []
+
   return (
     <Bubble.List
       ref={listRef}
@@ -38,7 +41,7 @@ export const ChatBubble = () => {
         paddingBottom: '20%'
       }}
       roles={rolesAsObject}
-      items={messages.map((message, index) => {
+      items={chatMessage?.map((message, index) => {
         const { content } = message
         const isAI = message.role === 'system'
 

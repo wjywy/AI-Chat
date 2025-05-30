@@ -5,7 +5,6 @@ import App from '@pc/App'
 import Home from '@pc/pages/Home'
 import Login from '@pc/pages/Login'
 import CreateAccount from '@pc/pages/CreateAccount'
-import { ConversationDetail } from '@pc/pages/ConversationDetail'
 
 import { PageTransition } from '@pc/components/PageTransition/PageTransition'
 import { WithPermission } from '@pc/components/WithPermission/WithPermission'
@@ -55,7 +54,8 @@ const routeElements = createRoutesFromElements(
         </WithPermission>
       }>
       <Route path="/" element={<Home />} />
-      <Route path="/conversation/:id" element={<ConversationDetail />} />
+      <Route path="/conversation" element={<Home />} />
+      <Route path="/conversation/:id" element={<Home />} />
     </Route>
   </Route>
 )

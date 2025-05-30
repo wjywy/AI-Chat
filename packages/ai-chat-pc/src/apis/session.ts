@@ -1,8 +1,13 @@
 import { request } from '@pc/utils'
 import type { Data } from '@pc/utils/request'
-import type { ChatSession, ChatMessage } from '@pc/types/session'
+import type { ChatSession } from '@pc/types/session'
 
 export const sessionApi = {
+  // 新建会话
+  createChat: (chatTitle: string): Promise<Data<ChatSession>> => {
+    return request<ChatSession>('chat/createChat', 'POST', { chatTitle })
+  },
+
   // 获取用户所有会话
   getUserChats: (): Promise<Data<ChatSession[]>> => {
     return request<ChatSession[]>('/chat/userChat', 'GET')
@@ -11,6 +16,11 @@ export const sessionApi = {
   // 获取单个会话接口
   getChatById: (id: string): Promise<Data<ChatSession>> => {
     return request<ChatSession>(`/chat/${id}`, 'GET')
+  },
+
+  // 更新会话标题
+  updateChatTitle: (chatId: string, title: string): Promise<Data<object>> => {
+    return request<object>(`/chat/updateTitle`, 'POST', { title, chatId })
   },
 
   // 删除会话接口

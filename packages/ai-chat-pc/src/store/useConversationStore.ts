@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { sessionApi } from '../apis/session'
-import type { ChatSession } from '../types/session'
 
 type Conversation = {
   id: string
@@ -14,6 +13,7 @@ interface ConversationState {
   error: string | null
 
   setSelectedId: (id: string | null) => void
+  createConversation: (title: string) => Promise<Conversation>
   fetchConversations: () => Promise<void>
   addConversation: (conversation: Conversation) => void
   deleteConversation: (id: string) => Promise<void>
@@ -28,6 +28,16 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
   error: null,
 
   setSelectedId: (id) => set({ selectedId: id }),
+
+  createConversation: async (title: string) => {
+    const { data } = await sessionApi.createChat(title)
+    const conversation = {
+      id: data.id,
+      title: data.title
+    }
+    get().addConversation(conversation)
+    return conversation
+  },
 
   fetchConversations: async () => {
     set({ loading: true, error: null })
@@ -67,7 +77,14 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
 
   updateConversation: async (id, updates) => {
     try {
-      await sessionApi.getChatById(id) // 假设更新是通过获取最新数据实现的
+      const { title } = updates
+
+      if (!title) {
+        set({ error: '标题不能为空' })
+        return
+      }
+
+      await sessionApi.updateChatTitle(id, title)
       set({
         conversations: get().conversations.map((c) => (c.id === id ? { ...c, ...updates } : c))
       })

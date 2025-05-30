@@ -5,11 +5,13 @@ import { LinkOutlined } from '@ant-design/icons'
 import { Attachments, Sender } from '@ant-design/x'
 import { Button, message, Spin, type GetRef } from 'antd'
 
-import { useChatStore, type ChatMessageProps } from '@pc/store/useChatStore'
+import { useChatStore, useConversationStore, type MessageProps } from '@pc/store'
 import { getCheckFileAPI, postFileChunksAPI, postMergeFileAPI } from '@pc/apis/chat'
+import { sessionApi } from '@pc/apis/session'
 
 import type { chunkItemType } from '@pc/types/chat'
 import { DEFAULT_MESSAGE } from '@pc/constant'
+import type { Role } from '@pc/types/common'
 
 // 切片的大小
 const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5
@@ -22,6 +24,7 @@ const AIRichInput = () => {
   const abortControllerRef = useRef<AbortController | null>(null)
 
   const { messages, addMessage } = useChatStore()
+  const { selectedId, setSelectedId, addConversation } = useConversationStore()
 
   // 文件切片
   const chunkFun = (file: File) => {
@@ -166,11 +169,19 @@ const AIRichInput = () => {
     }
   }
 
-  const submitMessage = (message: string) => {
-    const ans: ChatMessageProps = {
+  const submitMessage = async (message: string) => {
+    if (!selectedId) {
+      const { data } = await sessionApi.createChat('demo')
+      const { id, title } = data
+      setSelectedId(id)
+      addConversation({ id, title })
+    }
+
+    const ans: MessageProps = {
       content: message,
       role: 'user'
     }
+
     addMessage(ans)
   }
 
@@ -217,16 +228,20 @@ const AIRichInput = () => {
   )
 
   const showDefaultMessage = () => {
-    if (messages.length !== 0) {
-      return null
+    if (!selectedId) {
+      return <div className="text-2xl font-bold mb-10 text-center">{DEFAULT_MESSAGE}</div>
     }
 
-    return <div className="text-2xl font-bold mb-10 text-center">{DEFAULT_MESSAGE}</div>
+    const chatInfo = messages.get(selectedId)
+
+    if (chatInfo?.length !== 0) {
+      return null
+    }
   }
 
   return (
     <>
-      <div className={`fixed w-1/2 z-50 ${messages.length === 0 ? 'bottom-1/2' : 'bottom-8'}`}>
+      <div className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-8'}`}>
         {showDefaultMessage()}
         <Sender
           style={{ backgroundColor: 'white' }}

@@ -57,7 +57,7 @@ export function ConversationSidebar() {
   return (
     <div className="p-4">
       <div className="mb-4 flex justify-between items-center">
-        <Button type="primary" icon={<MessageOutlined />} onClick={handleAddConversation}>
+        <Button type="primary" icon={<MessageOutlined />} onClick={() => handleAddConversation()}>
           开启新对话
         </Button>
       </div>

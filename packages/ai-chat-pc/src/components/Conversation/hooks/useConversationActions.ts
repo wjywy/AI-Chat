@@ -15,12 +15,13 @@ export function useConversationActions() {
     deleteConversation,
     updateConversation,
     error,
-    fetchConversations
+    fetchConversations,
+    createConversation
   } = useConversationStore()
 
-  const handleAddConversation = () => {
+  const handleAddConversation = async () => {
     setSelectedId(null)
-    navigate('/')
+    navigate(`/conversation`)
   }
 
   const handleDelete = async (id: string) => {
