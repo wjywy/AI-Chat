@@ -1,5 +1,6 @@
-import type { LoginParams } from '@pc/types/user'
 import { useTranslation } from 'react-i18next'
+
+import type { LoginParams } from '@pc/types/user'
 
 interface EmailFormProps {
   onSubmit: (params: LoginParams) => void

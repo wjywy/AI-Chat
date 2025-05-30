@@ -1,14 +1,14 @@
 // packages/ai-chat-pc/src/router/index.tsx
-
-import App from '../App'
-import Home from '../pages/Home'
-import Login from '../pages/Login'
-import CreateAccount from '../pages/CreateAccount'
-import { PageTransition } from '../components/PageTransition/PageTransition'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom'
-import { WithPermission } from '../components/WithPermission/WithPermission'
-import { LayoutWithSidebar } from '../components/Layout/LayoutWithSidebar'
-import { ConversationDetail } from '../pages/ConversationDetail'
+
+import App from '@pc/App'
+import Home from '@pc/pages/Home'
+import Login from '@pc/pages/Login'
+import CreateAccount from '@pc/pages/CreateAccount'
+
+import { PageTransition } from '@pc/components/PageTransition/PageTransition'
+import { WithPermission } from '@pc/components/WithPermission/WithPermission'
+import { LayoutWithSidebar } from '@pc/components/Layout/LayoutWithSidebar'
 
 // 统一的路由配置
 const routes = [
@@ -54,7 +54,8 @@ const routeElements = createRoutesFromElements(
         </WithPermission>
       }>
       <Route path="/" element={<Home />} />
-      <Route path="/conversation/:id" element={<ConversationDetail />} />
+      <Route path="/conversation" element={<Home />} />
+      <Route path="/conversation/:id" element={<Home />} />
     </Route>
   </Route>
 )

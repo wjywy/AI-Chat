@@ -1,5 +1,9 @@
-import type { checkRespType, mergeChunkType, mergeResType } from '@pc/types/chat'
+import { EventSourcePolyfill } from 'event-source-polyfill'
+
+import type { checkRespType, mergeChunkType, mergeResType, SendMessageType } from '@pc/types/chat'
 import { request } from '@pc/utils/index'
+import { useUserStore } from '@pc/store'
+import { type Data } from '../utils/request'
 
 /**
  * 检查已上传的文件分片
@@ -31,4 +35,20 @@ export const postFileChunksAPI = (data: FormData, signal?: AbortSignal) => {
  */
 export const postMergeFileAPI = (data: mergeChunkType) => {
   return request<mergeResType>('/file/merge', 'POST', data)
+}
+
+// 发送消息
+export const sendChatMessage = (data: SendMessageType): Promise<Data<object>> => {
+  return request('chat/sendMessage', 'POST', data)
+}
+
+const baseUrl = 'http://we4c8e87.natappfree.cc'
+// 建立sse连接
+export const createSSE = (chatId: string) => {
+  const { token } = useUserStore.getState()
+  return new EventSourcePolyfill(`${baseUrl}/chat/getChat/${chatId}`, {
+    headers: {
+      Authorization: token || ''
+    }
+  })
 }

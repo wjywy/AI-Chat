@@ -1,15 +1,17 @@
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import AuthLayout from '../../components/Author/AuthLayout'
-import EmailForm from '../../components/Author/EmailForm'
-import AuthLink from '../../components/Author/AuthLink'
-import FooterLinks from '../../components/Author/FooterLinks'
-import AuthLanguageSwitch from '../../components/Author/AuthLanguageSwitch'
-import { useUserStore } from '../../store/useUserStore'
-import { userService } from '../../services/userService'
-import type { LoginParams } from '@pc/types/user'
-import { useTranslation } from 'react-i18next'
 import { message } from 'antd'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useLocation, useNavigate } from 'react-router-dom'
+
+import { userService } from '@pc/services/userService'
+import { useUserStore } from '@pc/store/useUserStore'
+import AuthLink from '@pc/components/Author/AuthLink'
+import EmailForm from '@pc/components/Author/EmailForm'
+import AuthLayout from '@pc/components/Author/AuthLayout'
+import FooterLinks from '@pc/components/Author/FooterLinks'
+import AuthLanguageSwitch from '@pc/components/Author/AuthLanguageSwitch'
+
+import type { LoginParams } from '@pc/types/user'
 
 export default function Login() {
   const { t } = useTranslation()
@@ -45,12 +47,6 @@ export default function Login() {
     <AuthLayout title={t('app.login')}>
       <div className="space-y-4">
         <AuthLanguageSwitch />
-
-        {/* {(error || storeError) && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
-            {error || storeError}
-          </div>
-        )} */}
         <EmailForm
           onSubmit={handleEmailSubmit}
           loading={loading}

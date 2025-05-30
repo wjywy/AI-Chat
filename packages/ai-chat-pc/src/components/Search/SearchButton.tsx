@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
 import { Sender } from '@ant-design/x'
-import useThemeStore from '@pc/store/useThemeStore'
+import { useState, useRef, useEffect } from 'react'
+
+import { useThemeStore } from '@pc/store'
 
 export const SearchButton = () => {
   const [isOpen, setIsOpen] = useState(false)

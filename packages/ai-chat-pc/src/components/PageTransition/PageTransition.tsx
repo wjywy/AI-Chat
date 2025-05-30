@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react'
 import { useRef } from 'react'
+import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
-import '../../styles/transition.css'
+
+import '@pc/styles/transition.css'
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const location = useLocation()

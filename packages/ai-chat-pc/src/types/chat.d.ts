@@ -24,3 +24,8 @@ export type mergeResType = {
   filePath: string
   fileName: string
 }
+
+export type SendMessageType = {
+  id: string
+  message: string
+}

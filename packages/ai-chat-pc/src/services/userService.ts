@@ -1,5 +1,6 @@
 import { authApi } from '@pc/apis/user'
-import { useUserStore } from '@pc/store/useUserStore'
+import { useUserStore } from '@pc/store'
+
 import type { LoginParams, RegisterParams, CaptchaParams } from '@pc/types/user'
 
 export const userService = {

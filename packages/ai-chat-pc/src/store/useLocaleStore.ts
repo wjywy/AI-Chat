@@ -19,7 +19,7 @@ interface LocaleState {
   changeLocale: (locale: LocaleType) => void
 }
 
-const useLocaleStore = create<LocaleState>()(
+export const useLocaleStore = create<LocaleState>()(
   persist(
     (set) => ({
       locale: (i18n.language as LocaleType) || 'zh-CN',
@@ -40,5 +40,3 @@ const useLocaleStore = create<LocaleState>()(
     }
   )
 )
-
-export default useLocaleStore

@@ -1,6 +1,5 @@
 import { message } from 'antd'
 import axios, { type AxiosError, type Method } from 'axios'
-import { userService } from '@pc/services/userService.ts'
 import { useUserStore } from '@pc/store/useUserStore'
 import router from '@pc/router'
 // 请求实例
@@ -11,19 +10,6 @@ const instance = axios.create({
 
 // 免token鉴权白名单
 const whiteList = ['/users/login', '/users/register', '/users/register-captcha']
-
-// token过期检查
-// const isTokenExpired = (token: string): boolean => {
-//   try {
-//     const base64Url = token.split('.')[1]
-//     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-//     const payload = JSON.parse(window.atob(base64))
-//     return payload.exp < Date.now() / 1000
-//   } catch (error) {
-//     console.error('Token解析错误', error)
-//     return true
-//   }
-// }
 
 // 请求拦截器
 instance.interceptors.request.use(
@@ -37,23 +23,6 @@ instance.interceptors.request.use(
     }
 
     const { token } = useUserStore.getState()
-
-    // 检查token是否存在
-    // if (!token) {
-    //   message.error('请先登录再操作')
-    //   // 这里只设置错误状态，实际跳转由组件完成
-    //   // 避免在拦截器中直接操作路由
-    //   useUserStore.setState({ error: '请先登录' })
-    //   return Promise.reject(new Error('未登录'))
-    // }
-
-    // // 检查token是否过期
-    // if (isTokenExpired(token)) {
-    //   message.error('登录已过期，请重新登录')
-    //   // 清除登录状态
-    //   userService.logout()
-    //   return Promise.reject(new Error('登录已过期'))
-    // }
 
     // 添加token到请求头
     config.headers['Authorization'] = `${token}`
@@ -75,6 +44,8 @@ instance.interceptors.response.use(
       message.error(msg || '请求出错, 请稍后再试')
       return
     }
+
+    console.log('响应拦截器', response.data)
     // 数据剥离
     return response.data
   },

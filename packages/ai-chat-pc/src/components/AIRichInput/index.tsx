@@ -1,21 +1,38 @@
-import { Attachments, Sender } from '@ant-design/x'
-import { useRef, useState } from 'react'
-import { Button, message, Spin, type GetRef } from 'antd'
 import SparkMD5 from 'spark-md5'
-import { LinkOutlined } from '@ant-design/icons'
-import type { chunkItemType } from '@pc/types/chat'
+import { useRef, useState } from 'react'
 import type { RcFile } from 'antd/es/upload'
-import { getCheckFileAPI, postFileChunksAPI, postMergeFileAPI } from '@pc/apis/chat'
+import { LinkOutlined } from '@ant-design/icons'
+import { Attachments, Sender } from '@ant-design/x'
+import { Button, message, Spin, type GetRef } from 'antd'
+
+import { useChatStore, useConversationStore, type MessageProps } from '@pc/store'
+import {
+  createSSE,
+  getCheckFileAPI,
+  postFileChunksAPI,
+  postMergeFileAPI,
+  sendChatMessage
+} from '@pc/apis/chat'
+import { sessionApi } from '@pc/apis/session'
+
+import type { chunkItemType } from '@pc/types/chat'
+import { DEFAULT_MESSAGE } from '@pc/constant'
 
 // 切片的大小
 const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5
 
 const AIRichInput = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [inputLoading, setInputLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
   const senderRef = useRef<GetRef<typeof Sender>>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
+  const idRef = useRef<string | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null)
+
+  const { messages, addMessage, addChunkMessage } = useChatStore()
+  const { selectedId, setSelectedId, addConversation } = useConversationStore()
 
   // 文件切片
   const chunkFun = (file: File) => {
@@ -160,6 +177,73 @@ const AIRichInput = () => {
     }
   }
 
+  const sendMessage = async (chatId: string, message: string) => {
+    sendChatMessage({
+      id: chatId,
+      message
+    }).finally(() => {
+      setInputLoading(false)
+    })
+  }
+
+  const createSSEAndSendMessage = (chatId: string, message: string) => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close()
+    }
+
+    eventSourceRef.current = createSSE(chatId)
+    let content = ''
+    eventSourceRef.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        if (data.type === 'chunk') {
+          content += data.content
+          addChunkMessage(data.content)
+        } else if (data.type === 'complete') {
+          content = data.content
+          content = ''
+        } else if (data.type === 'error') {
+          console.log('err', data.content)
+        }
+      } catch (error) {
+        console.log('解析消息失败', error)
+      }
+    }
+
+    eventSourceRef.current.onerror = (error) => {
+      console.error('SSE连接错误:', error)
+      eventSourceRef.current?.close()
+      eventSourceRef.current = null
+    }
+
+    sendMessage(chatId, message)
+  }
+
+  const submitMessage = async (message: string) => {
+    setInputLoading(true)
+    // 新建会话，并将id与会话关联
+    if (!selectedId) {
+      const { data } = await sessionApi.createChat(message)
+      const { id, title } = data
+      idRef.current = id
+      setSelectedId(id)
+      addConversation({ id, title })
+    }
+
+    const ans: MessageProps = {
+      content: message,
+      role: 'user'
+    }
+    // 发送用户消息
+    addMessage(ans)
+
+    console.log('idRef.current', idRef.current)
+    if (idRef.current || selectedId) {
+      // 建立sse连接，发送消息请求,并展示模型回复
+      createSSEAndSendMessage(idRef.current || (selectedId as string), message)
+    }
+  }
+
   const senderHeader = (
     <Sender.Header
       title="Attachments"
@@ -202,24 +286,40 @@ const AIRichInput = () => {
     </Sender.Header>
   )
 
+  const showDefaultMessage = () => {
+    if (!selectedId) {
+      return <div className="text-2xl font-bold mb-10 text-center">{DEFAULT_MESSAGE}</div>
+    }
+
+    const chatInfo = messages.get(selectedId)
+
+    if (chatInfo?.length !== 0) {
+      return null
+    }
+  }
+
   return (
     <>
-      <Sender
-        header={senderHeader}
-        prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
-        onPasteFile={(_, files) => {
-          for (const file of files) {
-            // 生成base64临时图片路径
-            attachmentsRef.current?.upload(file)
-          }
-          setOpen(true)
-        }}
-        submitType="shiftEnter"
-        placeholder="请输入您的问题"
-        onSubmit={() => {
-          console.log('submit')
-        }}
-      />
+      <div
+        className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} bg-white pb-[30px]`}>
+        {showDefaultMessage()}
+        <Sender
+          style={{ backgroundColor: 'white' }}
+          header={senderHeader}
+          prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
+          onPasteFile={(_, files) => {
+            for (const file of files) {
+              // 生成base64临时图片路径
+              attachmentsRef.current?.upload(file)
+            }
+            setOpen(true)
+          }}
+          submitType="shiftEnter"
+          placeholder="请输入您的问题"
+          loading={inputLoading}
+          onSubmit={(message) => submitMessage(message)}
+        />
+      </div>
     </>
   )
 }

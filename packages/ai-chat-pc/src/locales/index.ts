@@ -1,7 +1,7 @@
 import i18n from 'i18next'
+import dayjs from 'dayjs'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
-import dayjs from 'dayjs'
 
 import enUS from './en-US'
 import zhCN from './zh-CN'
