@@ -12,7 +12,7 @@ export function LayoutWithSidebar() {
   return (
     <div className="flex h-screen">
       <div
-        className={`${collapsed ? 'w-10' : 'w-64'} border-r border-gray-200 transition-all duration-300 flex flex-col`}>
+        className={`${collapsed ? 'w-10' : 'w-64'} border-r border-gray-200 transition-all duration-300 flex flex-col overflow-y-scroll`}>
         <div className="flex justify-between items-center p-2 border-b border-gray-200">
           {!collapsed && <img src="/gpt.jpg" alt="GPT Logo" className="w-8 h-8" />}
           <div className="flex items-center gap-2">

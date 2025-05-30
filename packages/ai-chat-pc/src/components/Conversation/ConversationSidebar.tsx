@@ -61,7 +61,7 @@ export function ConversationSidebar() {
           开启新对话
         </Button>
       </div>
-      <ul className="space-y-2">
+      <ul className="space-y-2 overflow-hidden text-ellipsis">
         {conversations.map((conv) => (
           <li
             key={conv.id}
@@ -76,7 +76,7 @@ export function ConversationSidebar() {
                 autoFocus
               />
             ) : (
-              <span>{conv.title}</span>
+              <div className="truncate">{conv.title}</div>
             )}
             <Dropdown menu={{ items: items(conv.id, conv.title) }} trigger={['click']}>
               <MoreOutlined className="ml-2" onClick={(e) => e.stopPropagation()} />

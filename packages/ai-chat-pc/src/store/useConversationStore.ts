@@ -13,7 +13,7 @@ interface ConversationState {
   error: string | null
 
   setSelectedId: (id: string | null) => void
-  createConversation: (title: string) => Promise<Conversation>
+  // createConversation: (title: string) => Promise<Conversation>
   fetchConversations: () => Promise<void>
   addConversation: (conversation: Conversation) => void
   deleteConversation: (id: string) => Promise<void>
@@ -29,15 +29,15 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
 
   setSelectedId: (id) => set({ selectedId: id }),
 
-  createConversation: async (title: string) => {
-    const { data } = await sessionApi.createChat(title)
-    const conversation = {
-      id: data.id,
-      title: data.title
-    }
-    get().addConversation(conversation)
-    return conversation
-  },
+  // createConversation: async (title: string) => {
+  //   const { data } = await sessionApi.createChat(title)
+  //   const conversation = {
+  //     id: data.id,
+  //     title: data.title
+  //   }
+  //   get().addConversation(conversation)
+  //   return conversation
+  // },
 
   fetchConversations: async () => {
     set({ loading: true, error: null })

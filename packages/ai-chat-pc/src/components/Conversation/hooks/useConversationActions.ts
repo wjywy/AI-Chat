@@ -15,8 +15,7 @@ export function useConversationActions() {
     deleteConversation,
     updateConversation,
     error,
-    fetchConversations,
-    createConversation
+    fetchConversations
   } = useConversationStore()
 
   const handleAddConversation = async () => {

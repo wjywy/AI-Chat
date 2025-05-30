@@ -6,24 +6,32 @@ import { Attachments, Sender } from '@ant-design/x'
 import { Button, message, Spin, type GetRef } from 'antd'
 
 import { useChatStore, useConversationStore, type MessageProps } from '@pc/store'
-import { getCheckFileAPI, postFileChunksAPI, postMergeFileAPI } from '@pc/apis/chat'
+import {
+  createSSE,
+  getCheckFileAPI,
+  postFileChunksAPI,
+  postMergeFileAPI,
+  sendChatMessage
+} from '@pc/apis/chat'
 import { sessionApi } from '@pc/apis/session'
 
 import type { chunkItemType } from '@pc/types/chat'
 import { DEFAULT_MESSAGE } from '@pc/constant'
-import type { Role } from '@pc/types/common'
 
 // 切片的大小
 const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5
 
 const AIRichInput = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [inputLoading, setInputLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
   const senderRef = useRef<GetRef<typeof Sender>>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
+  const idRef = useRef<string | null>(null)
+  const eventSourceRef = useRef<EventSource | null>(null)
 
-  const { messages, addMessage } = useChatStore()
+  const { messages, addMessage, addChunkMessage } = useChatStore()
   const { selectedId, setSelectedId, addConversation } = useConversationStore()
 
   // 文件切片
@@ -169,10 +177,55 @@ const AIRichInput = () => {
     }
   }
 
+  const sendMessage = async (chatId: string, message: string) => {
+    sendChatMessage({
+      id: chatId,
+      message
+    }).finally(() => {
+      setInputLoading(false)
+    })
+  }
+
+  const createSSEAndSendMessage = (chatId: string, message: string) => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close()
+    }
+
+    eventSourceRef.current = createSSE(chatId)
+    let content = ''
+    eventSourceRef.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        if (data.type === 'chunk') {
+          content += data.content
+          addChunkMessage(data.content)
+        } else if (data.type === 'complete') {
+          content = data.content
+          content = ''
+        } else if (data.type === 'error') {
+          console.log('err', data.content)
+        }
+      } catch (error) {
+        console.log('解析消息失败', error)
+      }
+    }
+
+    eventSourceRef.current.onerror = (error) => {
+      console.error('SSE连接错误:', error)
+      eventSourceRef.current?.close()
+      eventSourceRef.current = null
+    }
+
+    sendMessage(chatId, message)
+  }
+
   const submitMessage = async (message: string) => {
+    setInputLoading(true)
+    // 新建会话，并将id与会话关联
     if (!selectedId) {
-      const { data } = await sessionApi.createChat('demo')
+      const { data } = await sessionApi.createChat(message)
       const { id, title } = data
+      idRef.current = id
       setSelectedId(id)
       addConversation({ id, title })
     }
@@ -181,8 +234,13 @@ const AIRichInput = () => {
       content: message,
       role: 'user'
     }
-
+    // 发送用户消息
     addMessage(ans)
+
+    if (idRef.current) {
+      // 建立sse连接，发送消息请求,并展示模型回复
+      createSSEAndSendMessage(idRef.current, message)
+    }
   }
 
   const senderHeader = (
@@ -241,7 +299,8 @@ const AIRichInput = () => {
 
   return (
     <>
-      <div className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-8'}`}>
+      <div
+        className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} bg-white pb-[30px]`}>
         {showDefaultMessage()}
         <Sender
           style={{ backgroundColor: 'white' }}
@@ -256,6 +315,7 @@ const AIRichInput = () => {
           }}
           submitType="shiftEnter"
           placeholder="请输入您的问题"
+          loading={inputLoading}
           onSubmit={(message) => submitMessage(message)}
         />
       </div>
