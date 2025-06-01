@@ -31,5 +31,10 @@ export const sessionApi = {
   // 获取该会话的所有历史消息
   getChatHistory: (id: string): Promise<Data<ChatMessage[]>> => {
     return request(`/chat/messages/${id}`)
+  },
+
+  // 搜索聊天记录
+  searchMessages: (keyword: string): Promise<Data<ChatMessage[]>> => {
+    return request<ChatMessage[]>(`/chat/search`, 'GET', { keyword })
   }
 }

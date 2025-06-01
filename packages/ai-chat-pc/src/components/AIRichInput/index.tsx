@@ -178,11 +178,9 @@ const AIRichInput = () => {
   }
 
   const sendMessage = async (chatId: string, message: string) => {
-    sendChatMessage({
+    await sendChatMessage({
       id: chatId,
       message
-    }).finally(() => {
-      setInputLoading(false)
     })
   }
 
@@ -201,6 +199,7 @@ const AIRichInput = () => {
           addChunkMessage(data.content)
         } else if (data.type === 'complete') {
           content = data.content
+          setInputLoading(false)
           content = ''
         } else if (data.type === 'error') {
           console.log('err', data.content)
@@ -237,7 +236,6 @@ const AIRichInput = () => {
     // 发送用户消息
     addMessage(ans)
 
-    console.log('idRef.current', idRef.current)
     if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
       createSSEAndSendMessage(idRef.current || (selectedId as string), message)
