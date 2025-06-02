@@ -1,3 +1,4 @@
+// 在现有对象中添加以下内容
 export default {
   app: {
     title: 'AI 聊天',
@@ -50,5 +51,23 @@ export default {
     switchToDark: '切换到深色模式',
     light: '浅色',
     dark: '深色'
+  },
+  share: {
+    shareButton: '分享会话',
+    shareTitle: '分享链接',
+    copyButton: '复制链接',
+    closeButton: '关闭',
+    copySuccess: '链接已复制到剪贴板',
+    copyFailed: '复制失败，请手动复制',
+    shareDescription: '通过以下链接分享此会话：',
+    generateFailed: '生成分享链接失败',
+    sharedChatTitle: '分享的会话',
+    loading: '加载中...',
+    error: '获取分享会话失败',
+    invalidLink: '无效的分享链接',
+    notFound: '找不到分享的会话',
+    backToHome: '返回首页',
+    newChat: '开始新对话',
+    readOnly: '这是一个分享的会话，你无法在此回复'
   }
 }

@@ -51,7 +51,21 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
         loading: false
       })
     } catch (error) {
-      set({ error: '获取会话列表失败', loading: false })
+      // 添加默认数据
+      set({
+        conversations: [
+          {
+            id: 'default-1',
+            title: '示例会话1'
+          },
+          {
+            id: 'default-2',
+            title: '示例会话2'
+          }
+        ],
+        loading: false,
+        error: '获取会话列表失败'
+      })
     }
   },
 
