@@ -3,23 +3,17 @@ import { useParams } from 'react-router-dom'
 import { Bubble } from '@ant-design/x'
 import { useTranslation } from 'react-i18next'
 import AIRichInput from '@pc/components/AIRichInput'
-import { useConversationStore } from '@pc/store'
+import { useConversationStore, useChatStore } from '@pc/store'
 
 type Conversation = {
   id: string
   title: string
 }
 
-const messages = [
-  {
-    content: 'Hello, Ant Design X!',
-    role: 'user'
-  }
-]
-
 export function ConversationDetail() {
   const { id } = useParams()
   const { conversations } = useConversationStore()
+  const { messages } = useChatStore()
   const { t } = useTranslation()
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
 
@@ -28,15 +22,18 @@ export function ConversationDetail() {
     setCurrentConversation(found || null)
   }, [conversations, id])
 
+  const chatMessages = id ? messages.get(id) || [] : []
+
   return (
     <div className="p-4">
       <div className="p-4 rounded-lg shadow">
         {currentConversation ? (
           <>
-            <h1 className="text-xl font-bold dark:text-white">{currentConversation.title}</h1>
+            <div className="flex justify-between items-center">
+              <h1 className="text-xl font-bold dark:text-white">{currentConversation.title}</h1>
+            </div>
             <div className="mt-4">
-              <Bubble.List items={messages} />
-              {/* Replaced Sender with AIRichInput */}
+              <Bubble.List items={chatMessages} />
               <AIRichInput />
             </div>
           </>

@@ -1,3 +1,4 @@
+// 在现有对象中添加以下内容
 export default {
   app: {
     title: 'AI Chat',
@@ -50,5 +51,23 @@ export default {
     switchToDark: 'Switch to Dark Mode',
     light: 'Light',
     dark: 'Dark'
+  },
+  share: {
+    shareButton: 'Share Chat',
+    shareTitle: 'Share Link',
+    copyButton: 'Copy Link',
+    closeButton: 'Close',
+    copySuccess: 'Link copied to clipboard',
+    copyFailed: 'Copy failed, please copy manually',
+    shareDescription: 'Share this conversation via the link below:',
+    generateFailed: 'Failed to generate share link',
+    sharedChatTitle: 'Shared Conversation',
+    loading: 'Loading...',
+    error: 'Failed to get shared conversation',
+    invalidLink: 'Invalid share link',
+    notFound: 'Shared conversation not found',
+    backToHome: 'Back to Home',
+    newChat: 'Start New Chat',
+    readOnly: 'This is a shared conversation, you cannot reply here'
   }
 }

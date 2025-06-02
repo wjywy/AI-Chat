@@ -3,11 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import { MoreOutlined, MessageOutlined } from '@ant-design/icons'
 
 import { useConversationActions } from './hooks/useConversationActions'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { sessionApi } from '@pc/apis/session'
 import { type MessageProps, useChatStore } from '@pc/store'
+import { ShareDialog } from './ShareDialog'
 
 export function ConversationSidebar() {
+  const [shareDialogChatId, setShareDialogChatId] = useState<string | null>(null)
+
+  const handleShare = (id: string) => {
+    setShareDialogChatId(id)
+  }
   const navigate = useNavigate()
   const {
     selectedId,
@@ -37,6 +43,14 @@ export function ConversationSidebar() {
       onClick: (e: any) => {
         e.domEvent.stopPropagation()
         startEdit(id, title)
+      }
+    },
+    {
+      key: 'share',
+      label: '分享',
+      onClick: (e: any) => {
+        e.domEvent.stopPropagation()
+        handleShare(id)
       }
     },
     {
@@ -104,6 +118,7 @@ export function ConversationSidebar() {
           </li>
         ))}
       </ul>
+      <ShareDialog chatId={shareDialogChatId} onClose={() => setShareDialogChatId(null)} />
     </div>
   )
 }

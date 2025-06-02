@@ -5,7 +5,8 @@ import App from '@pc/App'
 import Home from '@pc/pages/Home'
 import Login from '@pc/pages/Login'
 import CreateAccount from '@pc/pages/CreateAccount'
-
+import { SharedChat } from '@pc/pages/SharedChat'
+// import { ConversationDetail } from '@pc/pages/ConversationDetail'
 import { PageTransition } from '@pc/components/PageTransition/PageTransition'
 import { WithPermission } from '@pc/components/WithPermission/WithPermission'
 import { LayoutWithSidebar } from '@pc/components/Layout/LayoutWithSidebar'
@@ -46,6 +47,8 @@ const routeElements = createRoutesFromElements(
       }>
       <Route path="/login" element={<Login />} />
       <Route path="/create-account" element={<CreateAccount />} />
+      {/* 分享会话路由 - 不需要登录验证 */}
+      <Route path="/shared/:shareId" element={<SharedChat />} />
     </Route>
     <Route
       element={
