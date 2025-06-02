@@ -86,5 +86,9 @@ export const sessionApi = {
         ]
       }
     })
+  },
+  // 搜索聊天记录
+  searchMessages: (keyword: string): Promise<Data<ChatMessage[]>> => {
+    return request<ChatMessage[]>(`/chat/searchChat`, 'GET', { keyWord: keyword })
   }
 }

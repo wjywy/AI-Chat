@@ -1,12 +1,13 @@
-import { Button, Dropdown, Input } from 'antd'
+import { Dropdown, Input } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { MoreOutlined, MessageOutlined } from '@ant-design/icons'
+import { MoreOutlined, MessageOutlined, SearchOutlined } from '@ant-design/icons'
 
 import { useConversationActions } from './hooks/useConversationActions'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { sessionApi } from '@pc/apis/session'
 import { type MessageProps, useChatStore } from '@pc/store'
 import { ShareDialog } from './ShareDialog'
+import { SearchButton } from '@pc/components/Search/SearchButton'
 
 export function ConversationSidebar() {
   const [shareDialogChatId, setShareDialogChatId] = useState<string | null>(null)
@@ -15,6 +16,7 @@ export function ConversationSidebar() {
     setShareDialogChatId(id)
   }
   const navigate = useNavigate()
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const {
     selectedId,
     setSelectedId,
@@ -90,10 +92,20 @@ export function ConversationSidebar() {
 
   return (
     <div className="p-4">
-      <div className="mb-4 flex justify-between items-center">
-        <Button type="primary" icon={<MessageOutlined />} onClick={() => handleAddConversation()}>
-          开启新对话
-        </Button>
+      <div className="mb-4 flex flex-col gap-2">
+        <button
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          onClick={() => handleAddConversation()}>
+          <MessageOutlined />
+          <span>开启新对话</span>
+        </button>
+        <button
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          onClick={() => setIsSearchOpen(true)}>
+          <SearchOutlined />
+          <span>搜索聊天记录</span>
+        </button>
+        <SearchButton isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       </div>
       <ul className="space-y-2 overflow-hidden text-ellipsis">
         {conversations.map((conv) => (
