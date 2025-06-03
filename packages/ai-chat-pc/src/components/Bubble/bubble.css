@@ -10,3 +10,32 @@
     scrollbar-width: none;
     /* Firefox */
 }
+
+/* 图片消息样式 */
+.message-image-container {
+    margin: 5px 0;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.message-image-container .ant-image {
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.message-image-container .ant-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .text-content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }

@@ -42,7 +42,7 @@ export const sendChatMessage = (data: SendMessageType): Promise<Data<object>> =>
   return request('chat/sendMessage', 'POST', data)
 }
 
-const baseUrl = 'http://we4c8e87.natappfree.cc'
+const baseUrl = 'http://q683ca5c.natappfree.cc'
 // 建立sse连接
 export const createSSE = (chatId: string) => {
   const { token } = useUserStore.getState()

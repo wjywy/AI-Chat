@@ -4,7 +4,7 @@ import { useUserStore } from '@pc/store/useUserStore'
 import router from '@pc/router'
 // 请求实例
 const instance = axios.create({
-  baseURL: 'http://we4c8e87.natappfree.cc', // 基地址
+  baseURL: 'http://q683ca5c.natappfree.cc', // 基地址
   timeout: 5000
 })
 
