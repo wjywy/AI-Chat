@@ -29,3 +29,15 @@ export type SendMessageType = {
   id: string
   message: string
 }
+
+export interface MessageContent {
+  type: 'text' | 'image'
+  content: string
+}
+
+export interface Message {
+  id: string
+  role: 'user' | 'system'
+  content: MessageContent[] // 数组，支持混合内容
+  timestamp: number
+}

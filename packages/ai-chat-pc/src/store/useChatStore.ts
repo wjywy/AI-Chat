@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 import { useConversationStore } from './useConversationStore'
 import type { Role } from '@pc/types/common'
+import type { MessageContent } from '@pc/types/chat'
 
 export type MessageProps = {
-  content: string
+  content: MessageContent[] | string // 兼容旧格式
   role: Role
 }
 

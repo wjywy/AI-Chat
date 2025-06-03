@@ -15,7 +15,7 @@ import {
 } from '@pc/apis/chat'
 import { sessionApi } from '@pc/apis/session'
 
-import type { chunkItemType } from '@pc/types/chat'
+import type { chunkItemType, MessageContent } from '@pc/types/chat'
 import { DEFAULT_MESSAGE } from '@pc/constant'
 
 // 切片的大小
@@ -33,6 +33,7 @@ const AIRichInput = () => {
 
   const { messages, addMessage, addChunkMessage } = useChatStore()
   const { selectedId, setSelectedId, addConversation } = useConversationStore()
+  const [selectedImages, setSelectedImages] = useState<string[]>([])
 
   // 文件切片
   const chunkFun = (file: File) => {
@@ -101,6 +102,13 @@ const AIRichInput = () => {
   const selectFile = async (file: RcFile) => {
     try {
       setIsLoading(true)
+
+      // 如果是图片文件，直接生成预览URL并存储
+      if (file.type.startsWith('image/')) {
+        const imageUrl = URL.createObjectURL(file) // 之后需要替换为API给的url
+        setSelectedImages((prev) => [...prev, imageUrl])
+      }
+
       const controller = new AbortController()
       abortControllerRef.current = controller
       const fileName = file.name
@@ -222,19 +230,50 @@ const AIRichInput = () => {
     setInputLoading(true)
     // 新建会话，并将id与会话关联
     if (!selectedId) {
-      const { data } = await sessionApi.createChat(message)
+      const { data } = await sessionApi.createChat(message || '图片消息')
       const { id, title } = data
       idRef.current = id
       setSelectedId(id)
       addConversation({ id, title })
     }
 
+    // 构建消息内容
+    let messageContent: string | MessageContent[]
+
+    // 如果有图片或者需要混合内容
+    if (selectedImages.length > 0) {
+      const contentArray: MessageContent[] = []
+
+      // 添加文本内容
+      if (message.trim()) {
+        contentArray.push({
+          type: 'text',
+          content: message
+        })
+      }
+
+      // 添加图片内容
+      selectedImages.forEach((imageUrl) => {
+        contentArray.push({
+          type: 'image',
+          content: imageUrl
+        })
+      })
+
+      messageContent = contentArray
+    } else {
+      // 纯文本消息
+      messageContent = message
+    }
     const ans: MessageProps = {
-      content: message,
+      content: messageContent,
       role: 'user'
     }
     // 发送用户消息
     addMessage(ans)
+
+    // // 清空选中的图片
+    // setSelectedImages([])
 
     if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
@@ -267,6 +306,9 @@ const AIRichInput = () => {
         }>
         <Attachments
           ref={attachmentsRef}
+          styles={{
+            placeholder: { backgroundColor: 'transparent' }
+          }}
           beforeUpload={handleFileUpload}
           placeholder={(type) =>
             type === 'drop'
@@ -298,11 +340,9 @@ const AIRichInput = () => {
 
   return (
     <>
-      <div
-        className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} bg-white pb-[30px]`}>
+      <div className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px]`}>
         {showDefaultMessage()}
         <Sender
-          style={{ backgroundColor: 'white' }}
           header={senderHeader}
           prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
           onPasteFile={(_, files) => {
