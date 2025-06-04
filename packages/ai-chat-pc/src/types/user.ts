@@ -1,5 +1,5 @@
 // 用户信息类型
-interface UserInfo {
+export interface UserInfo {
   nickName: string
   token: string
 }
@@ -31,4 +31,4 @@ export interface CaptchaParams {
   address: string
 }
 
-export type { UserInfo, User }
+// export type { UserInfo, User }

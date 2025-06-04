@@ -15,4 +15,5 @@ export interface ChatMessage {
   content: string
   chatId: string
   createdAt: string
+  imgUrl: string[] | null
 }

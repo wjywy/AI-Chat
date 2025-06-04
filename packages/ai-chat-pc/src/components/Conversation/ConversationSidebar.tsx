@@ -8,6 +8,7 @@ import { sessionApi } from '@pc/apis/session'
 import { type MessageProps, useChatStore } from '@pc/store'
 import { ShareDialog } from './ShareDialog'
 import { SearchButton } from '@pc/components/Search/SearchButton'
+import { type MessageContent } from '@pc/types/chat'
 
 export function ConversationSidebar() {
   const [shareDialogChatId, setShareDialogChatId] = useState<string | null>(null)
@@ -82,15 +83,26 @@ export function ConversationSidebar() {
     const { data } = await sessionApi.getChatHistory(id)
 
     data.forEach((message) => {
+      const contentArray: MessageContent[] = []
+      if (message.imgUrl) {
+        message.imgUrl.forEach((url) => {
+          contentArray.push({
+            type: 'image',
+            content: url
+          })
+        })
+      }
+
+      contentArray.push({
+        type: 'text',
+        content: message.content
+      })
+
       const ans: MessageProps = {
-        content: [
-          {
-            type: 'text',
-            content: message.content
-          }
-        ],
+        content: contentArray,
         role: message.role
       }
+
       addMessage(ans)
     })
   }
