@@ -16,7 +16,7 @@ import {
 import { sessionApi } from '@pc/apis/session'
 
 import type { chunkItemType, MessageContent } from '@pc/types/chat'
-import { DEFAULT_MESSAGE } from '@pc/constant'
+import { BASE_URL, DEFAULT_MESSAGE } from '@pc/constant'
 
 // 切片的大小
 const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5
@@ -34,6 +34,8 @@ const AIRichInput = () => {
   const { messages, addMessage, addChunkMessage } = useChatStore()
   const { selectedId, setSelectedId, addConversation } = useConversationStore()
   const [selectedImages, setSelectedImages] = useState<string[]>([])
+  const [isImage, setIsImage] = useState(false)
+  const isImageRef = useRef(false)
 
   // 文件切片
   const chunkFun = (file: File) => {
@@ -105,8 +107,11 @@ const AIRichInput = () => {
 
       // 如果是图片文件，直接生成预览URL并存储
       if (file.type.startsWith('image/')) {
-        const imageUrl = URL.createObjectURL(file) // 之后需要替换为API给的url
-        setSelectedImages((prev) => [...prev, imageUrl])
+        // setIsImage(true)
+        isImageRef.current = true
+      } else {
+        // setIsImage(false)
+        isImageRef.current = false
       }
 
       const controller = new AbortController()
@@ -122,8 +127,9 @@ const AIRichInput = () => {
       const {
         data: { fileStatus, uploaded }
       } = await getCheckFileAPI(fileId, file.name)
-      if (fileStatus === 1) return message.success('文件上传成功')
-      else {
+      if (fileStatus === 1) {
+        return message.success('文件上传成功')
+      } else {
         // 上传分片
         await uploadChunks(fileChunks, fileId, fileName, chunkHashVals, uploaded || [], controller)
       }
@@ -157,6 +163,7 @@ const AIRichInput = () => {
 
     try {
       await Promise.all(promisesList)
+
       const {
         data: { fileName, filePath }
       } = await postMergeFileAPI({
@@ -166,6 +173,10 @@ const AIRichInput = () => {
       })
       // 做后续的存储操作 - 如果需要的话
       console.log('fileName, filePath', fileName, filePath)
+      if (isImageRef.current) {
+        const imageUrl = `${BASE_URL}${filePath}` // 之后需要替换为API给的url
+        setSelectedImages((prev) => [...prev, imageUrl])
+      }
     } catch (_) {
       console.log('err', '分片上传失败')
     }
@@ -185,14 +196,17 @@ const AIRichInput = () => {
     }
   }
 
-  const sendMessage = async (chatId: string, message: string) => {
+  const sendMessage = async (chatId: string, message: string, images?: string[]) => {
     await sendChatMessage({
       id: chatId,
-      message
+      message,
+      imgUrl: images
+    }).finally(() => {
+      setSelectedImages([])
     })
   }
 
-  const createSSEAndSendMessage = (chatId: string, message: string) => {
+  const createSSEAndSendMessage = (chatId: string, message: string, images?: string[]) => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close()
     }
@@ -223,7 +237,7 @@ const AIRichInput = () => {
       eventSourceRef.current = null
     }
 
-    sendMessage(chatId, message)
+    sendMessage(chatId, message, images)
   }
 
   const submitMessage = async (message: string) => {
@@ -238,46 +252,48 @@ const AIRichInput = () => {
     }
 
     // 构建消息内容
-    let messageContent: string | MessageContent[]
+    // let messageContent: MessageContent[]
 
     // 如果有图片或者需要混合内容
-    if (selectedImages.length > 0) {
-      const contentArray: MessageContent[] = []
+    // if (selectedImages.length > 0) {
+    const contentArray: MessageContent[] = []
 
-      // 添加文本内容
-      if (message.trim()) {
-        contentArray.push({
-          type: 'text',
-          content: message
-        })
-      }
-
-      // 添加图片内容
-      selectedImages.forEach((imageUrl) => {
-        contentArray.push({
-          type: 'image',
-          content: imageUrl
-        })
+    // 添加文本内容
+    if (message.trim()) {
+      contentArray.push({
+        type: 'text',
+        content: message
       })
-
-      messageContent = contentArray
-    } else {
-      // 纯文本消息
-      messageContent = message
     }
+
+    // 添加图片内容
+    selectedImages.forEach((imageUrl) => {
+      contentArray.push({
+        type: 'image',
+        content: imageUrl
+      })
+    })
+
+    // messageContent = contentArray
+    // }
+    // else {
+    //   // 纯文本消息
+    //   messageContent = message
+    // }
     const ans: MessageProps = {
-      content: messageContent,
+      content: contentArray,
       role: 'user'
     }
     // 发送用户消息
     addMessage(ans)
 
-    // // 清空选中的图片
-    // setSelectedImages([])
-
     if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
-      createSSEAndSendMessage(idRef.current || (selectedId as string), message)
+      createSSEAndSendMessage(
+        idRef.current || (selectedId as string),
+        message,
+        selectedImages.length > 0 ? selectedImages : undefined
+      )
     }
   }
 
@@ -340,7 +356,8 @@ const AIRichInput = () => {
 
   return (
     <>
-      <div className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px]`}>
+      <div
+        className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px] bg-white`}>
         {showDefaultMessage()}
         <Sender
           header={senderHeader}

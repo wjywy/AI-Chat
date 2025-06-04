@@ -4,7 +4,7 @@ import type { Role } from '@pc/types/common'
 import type { MessageContent } from '@pc/types/chat'
 
 export type MessageProps = {
-  content: MessageContent[] | string // 兼容旧格式
+  content: MessageContent[] // 兼容旧格式
   role: Role
 }
 
@@ -29,18 +29,40 @@ export const useChatStore = create<ChatStoreProps>((set, get) => ({
   },
 
   addChunkMessage: (chunk: string) => {
-    console.log('chunk', chunk)
     const { selectedId } = useConversationStore.getState() // 获取实时的 selectedId
     set((state) => {
       const currentMessages = state.messages.get(selectedId as string) || []
       const lastMessage = currentMessages[currentMessages.length - 1]
+
       if (lastMessage && lastMessage.role === 'system') {
-        // 如果最后一条消息是一个 chunk，则更新其内容
-        lastMessage.content += chunk
+        // 如果最后一条消息是系统消息，则更新其内容
+        const lastContent = lastMessage.content
+        const lastTextContent = lastContent[lastContent.length - 1]
+
+        // 如果最后一个内容项是文本类型，则追加到该文本内容中
+        if (lastTextContent && lastTextContent.type === 'text') {
+          lastTextContent.content += chunk
+        }
+        // else {
+        //   // 否则，添加一个新的文本内容项
+        //   lastMessage.content.push({
+        //     type: 'text',
+        //     content: chunk
+        //   })
+        // }
       } else {
-        // 否则，添加一个新的 chunk 消息
-        currentMessages.push({ content: chunk, role: 'system' })
+        // 否则，添加一个新的系统消息，包含文本内容
+        currentMessages.push({
+          content: [
+            {
+              type: 'text',
+              content: chunk
+            }
+          ],
+          role: 'system'
+        })
       }
+
       return {
         messages: state.messages.set(selectedId as string, currentMessages)
       }

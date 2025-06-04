@@ -4,6 +4,7 @@ import type { checkRespType, mergeChunkType, mergeResType, SendMessageType } fro
 import { request } from '@pc/utils/index'
 import { useUserStore } from '@pc/store'
 import { type Data } from '../utils/request'
+import { BASE_URL } from '@pc/constant'
 
 /**
  * 检查已上传的文件分片
@@ -42,11 +43,10 @@ export const sendChatMessage = (data: SendMessageType): Promise<Data<object>> =>
   return request('chat/sendMessage', 'POST', data)
 }
 
-const baseUrl = 'http://q683ca5c.natappfree.cc'
 // 建立sse连接
 export const createSSE = (chatId: string) => {
   const { token } = useUserStore.getState()
-  return new EventSourcePolyfill(`${baseUrl}/chat/getChat/${chatId}`, {
+  return new EventSourcePolyfill(`${BASE_URL}/chat/getChat/${chatId}`, {
     headers: {
       Authorization: token || ''
     }

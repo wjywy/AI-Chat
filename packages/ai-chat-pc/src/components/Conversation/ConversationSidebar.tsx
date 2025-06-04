@@ -83,7 +83,12 @@ export function ConversationSidebar() {
 
     data.forEach((message) => {
       const ans: MessageProps = {
-        content: message.content,
+        content: [
+          {
+            type: 'text',
+            content: message.content
+          }
+        ],
         role: message.role
       }
       addMessage(ans)

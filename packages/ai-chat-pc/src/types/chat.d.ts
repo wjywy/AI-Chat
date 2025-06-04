@@ -28,6 +28,7 @@ export type mergeResType = {
 export type SendMessageType = {
   id: string
   message: string
+  imgUrl?: string[]
 }
 
 export interface MessageContent {

@@ -2,9 +2,11 @@ import { message } from 'antd'
 import axios, { type AxiosError, type Method } from 'axios'
 import { useUserStore } from '@pc/store/useUserStore'
 import router from '@pc/router'
+import { BASE_URL } from '@pc/constant'
+
 // 请求实例
 const instance = axios.create({
-  baseURL: 'http://q683ca5c.natappfree.cc', // 基地址
+  baseURL: BASE_URL, // 基地址
   timeout: 5000
 })
 
