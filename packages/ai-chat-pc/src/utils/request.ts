@@ -7,7 +7,7 @@ import { BASE_URL } from '@pc/constant'
 // 请求实例
 const instance = axios.create({
   baseURL: BASE_URL, // 基地址
-  timeout: 5000
+  timeout: 30000
 })
 
 // 免token鉴权白名单

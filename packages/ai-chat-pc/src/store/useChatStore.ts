@@ -43,13 +43,6 @@ export const useChatStore = create<ChatStoreProps>((set, get) => ({
         if (lastTextContent && lastTextContent.type === 'text') {
           lastTextContent.content += chunk
         }
-        // else {
-        //   // 否则，添加一个新的文本内容项
-        //   lastMessage.content.push({
-        //     type: 'text',
-        //     content: chunk
-        //   })
-        // }
       } else {
         // 否则，添加一个新的系统消息，包含文本内容
         currentMessages.push({

@@ -1,1 +1,1 @@
-export type Role = 'user' | 'system'
+export type Role = 'user' | 'system' | 'file' | 'image'

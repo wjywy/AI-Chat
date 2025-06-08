@@ -29,12 +29,29 @@ export type SendMessageType = {
   id: string
   message: string
   imgUrl?: string[]
+  fileId?: string
 }
 
-export interface MessageContent {
-  type: 'text' | 'image'
+export interface ImageContent {
+  type: 'image'
   content: string
 }
+
+export interface TextContent {
+  type: 'text'
+  content: string
+}
+
+export interface FileContent {
+  type: 'file'
+  content: {
+    uid: string
+    name: string
+    size?: number
+  }
+}
+
+export type MessageContent = ImageContent | TextContent | FileContent
 
 export interface Message {
   id: string

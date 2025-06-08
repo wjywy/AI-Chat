@@ -15,11 +15,18 @@ import {
 } from '@pc/apis/chat'
 import { sessionApi } from '@pc/apis/session'
 
-import type { chunkItemType, MessageContent } from '@pc/types/chat'
+import type { MessageContent } from '@pc/types/chat'
 import { BASE_URL, DEFAULT_MESSAGE } from '@pc/constant'
 
-// 切片的大小
-const CHUNK_SIZE = 1024 * 1024 * 0.5 * 0.5
+// 切片的大小 - 使用2MB分片大小以提高上传效率
+const CHUNK_SIZE = 1024 * 1024 * 2
+// 并发上传数量
+const CONCURRENT_UPLOADS = 3
+
+interface ChunkInfo {
+  index: number
+  chunk: Blob
+}
 
 const AIRichInput = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -30,61 +37,67 @@ const AIRichInput = () => {
   const abortControllerRef = useRef<AbortController | null>(null)
   const idRef = useRef<string | null>(null)
   const eventSourceRef = useRef<EventSource | null>(null)
+  const uploadedChunksRef = useRef<number[]>([])
+  const fileChunksRef = useRef<ChunkInfo[]>([])
+  const fileIdRef = useRef<string | null>(null)
+  const fileNameRef = useRef<string | null>(null)
 
   const { messages, addMessage, addChunkMessage } = useChatStore()
   const { selectedId, setSelectedId, addConversation } = useConversationStore()
   const [selectedImages, setSelectedImages] = useState<string[]>([])
-  const [isImage, setIsImage] = useState(false)
   const isImageRef = useRef(false)
 
-  // 文件切片
-  const chunkFun = (file: File) => {
-    const chunksList: chunkItemType[] = []
-    for (let i = 0; i < file.size; i += CHUNK_SIZE) {
-      chunksList.push({ file: file.slice(i, i + CHUNK_SIZE) })
-    }
-    return chunksList
-  }
+  // 创建文件分片
+  const createFileChunks = (file: File): ChunkInfo[] => {
+    const chunks: ChunkInfo[] = []
+    const chunksCount = Math.ceil(file.size / CHUNK_SIZE)
 
-  // 计算各个切片的hash
-  const calculateChunkHash = async (fileChunks: chunkItemType[]): Promise<string[]> => {
-    return Promise.all(
-      fileChunks.map((chunk) => {
-        return new Promise<string>((resolve, reject) => {
-          const spark = new SparkMD5.ArrayBuffer()
-          const reader = new FileReader()
-          reader.readAsArrayBuffer(chunk.file)
-          reader.onload = (e) => {
-            if (e.target?.result) {
-              spark.append(e.target.result as ArrayBuffer)
-              resolve(spark.end())
-            } else {
-              reject(new Error('Failed to read chunk'))
-            }
-          }
-          reader.onerror = () => reject(new Error('Error reading chunk'))
-        })
+    for (let i = 0; i < chunksCount; i++) {
+      const start = i * CHUNK_SIZE
+      const end = Math.min(file.size, start + CHUNK_SIZE)
+      const chunk = file.slice(start, end)
+      chunks.push({
+        index: i,
+        chunk: chunk
       })
-    )
+    }
+
+    return chunks
   }
 
-  const calculateFileHash = async (fileChunks: chunkItemType[]): Promise<string> => {
+  // 计算单个分片的hash
+  const calculateChunkHash = async (chunk: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const spark = new SparkMD5.ArrayBuffer()
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(chunk)
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          spark.append(e.target.result as ArrayBuffer)
+          resolve(spark.end())
+        } else {
+          reject(new Error('Failed to read chunk'))
+        }
+      }
+      reader.onerror = () => reject(new Error('Error reading chunk'))
+    })
+  }
+
+  // 计算文件hash（用于文件唯一标识）
+  const calculateFileHash = async (fileChunks: ChunkInfo[]): Promise<string> => {
     return new Promise((resolve, reject) => {
       const spark = new SparkMD5.ArrayBuffer()
       const chunks: Blob[] = []
 
       fileChunks.forEach((chunk, index) => {
         if (index === 0 || index === fileChunks.length - 1) {
-          // 1. 第一个和最后一个切片的内容全部参与计算
-          chunks.push(chunk.file)
+          // 第一个和最后一个切片的内容全部参与计算
+          chunks.push(chunk.chunk)
         } else {
-          // 2. 中间剩余的切片我们分别在前面、后面和中间取2个字节参与计算
-          // 前面的2字节
-          chunks.push(chunk.file.slice(0, 2))
-          // 中间的2字节
-          chunks.push(chunk.file.slice(CHUNK_SIZE / 2, CHUNK_SIZE / 2 + 2))
-          // 后面的2字节
-          chunks.push(chunk.file.slice(CHUNK_SIZE - 2, CHUNK_SIZE))
+          // 中间剩余的切片分别在前面、后面和中间取2个字节参与计算
+          chunks.push(chunk.chunk.slice(0, 2))
+          chunks.push(chunk.chunk.slice(CHUNK_SIZE / 2, CHUNK_SIZE / 2 + 2))
+          chunks.push(chunk.chunk.slice(CHUNK_SIZE - 2, CHUNK_SIZE))
         }
       })
 
@@ -98,87 +111,164 @@ const AIRichInput = () => {
           reject(new Error('Failed to read chunk'))
         }
       }
+      reader.onerror = () => reject(new Error('Error reading file hash'))
     })
+  }
+
+  // 上传单个分片
+  const uploadSingleChunk = async (
+    chunk: ChunkInfo,
+    fileId: string,
+    fileName: string,
+    controller: AbortController
+  ): Promise<boolean> => {
+    if (uploadedChunksRef.current.includes(chunk.index)) {
+      console.log(`分片 ${chunk.index} 已上传，跳过`)
+      return true
+    }
+
+    try {
+      const chunkHash = await calculateChunkHash(chunk.chunk)
+      const formData = new FormData()
+      formData.append('fileId', fileId)
+      formData.append('fileName', fileName)
+      formData.append('index', String(chunk.index))
+      formData.append('chunkHash', chunkHash)
+      formData.append('chunk', chunk.chunk)
+
+      const response = await postFileChunksAPI(formData, controller.signal)
+
+      if (response) {
+        uploadedChunksRef.current.push(chunk.index)
+        return true
+      } else {
+        return false
+      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        return false
+      }
+      return false
+    }
+  }
+
+  // 并发上传分片
+  const uploadChunksWithConcurrency = async (
+    fileChunks: ChunkInfo[],
+    fileId: string,
+    fileName: string,
+    uploaded: number[],
+    controller: AbortController
+  ): Promise<boolean> => {
+    uploadedChunksRef.current = uploaded
+    fileChunksRef.current = fileChunks
+
+    const pendingChunks = fileChunks.filter(
+      (chunk) => !uploadedChunksRef.current.includes(chunk.index)
+    )
+
+    if (pendingChunks.length === 0) {
+      return true
+    }
+
+    console.log(`开始上传 ${pendingChunks.length} 个分片，并发数: ${CONCURRENT_UPLOADS}`)
+
+    // 使用并发控制上传
+    const chunksToUpload = [...pendingChunks]
+    const uploadPromises: Promise<void>[] = []
+
+    const uploadNext = async (): Promise<void> => {
+      while (chunksToUpload.length > 0) {
+        const chunk = chunksToUpload.shift()
+        if (!chunk) break
+
+        await uploadSingleChunk(chunk, fileId, fileName, controller)
+      }
+    }
+
+    // 启动并发上传
+    const concurrentUploads = Math.min(CONCURRENT_UPLOADS, chunksToUpload.length)
+    for (let i = 0; i < concurrentUploads; i++) {
+      uploadPromises.push(uploadNext())
+    }
+
+    await Promise.all(uploadPromises)
+
+    // 检查是否所有分片都已上传
+    const allUploaded = fileChunks.every((chunk) => uploadedChunksRef.current.includes(chunk.index))
+    return allUploaded
   }
 
   const selectFile = async (file: RcFile) => {
     try {
       setIsLoading(true)
 
-      // 如果是图片文件，直接生成预览URL并存储
+      // 判断是否为图片文件
       if (file.type.startsWith('image/')) {
-        // setIsImage(true)
         isImageRef.current = true
       } else {
-        // setIsImage(false)
         isImageRef.current = false
       }
 
       const controller = new AbortController()
       abortControllerRef.current = controller
       const fileName = file.name
+      fileNameRef.current = fileName
+
       // 创建切片
-      const fileChunks = chunkFun(file)
-      // 计算整个文件的hash作为fileId，尽管 file.uid 可以拿到文件唯一标识，但对于同一个文件，每次上传得到的值都是不同的
+      const fileChunks = createFileChunks(file)
+
+      // 计算整个文件的hash作为fileId
       const fileId = await calculateFileHash(fileChunks)
-      // 读取各个切片的hash值
-      const chunkHashVals = await calculateChunkHash(fileChunks)
+      fileIdRef.current = fileId
+
       // 分片上传前的校验
       const {
         data: { fileStatus, uploaded }
-      } = await getCheckFileAPI(fileId, file.name)
+      } = await getCheckFileAPI(fileId, file.name, selectedId ? selectedId : '')
+
       if (fileStatus === 1) {
-        return message.success('文件上传成功')
+        message.success('文件上传成功')
+        return
       } else {
         // 上传分片
-        await uploadChunks(fileChunks, fileId, fileName, chunkHashVals, uploaded || [], controller)
+        const success = await uploadChunksWithConcurrency(
+          fileChunks,
+          fileId,
+          fileName,
+          uploaded || [],
+          controller
+        )
+
+        if (success) {
+          // 合并文件
+          const {
+            data: { fileName: mergedFileName, filePath }
+          } = await postMergeFileAPI({
+            fileId,
+            fileName: fileName,
+            totalChunks: fileChunks.length
+          })
+
+          console.log('文件合并成功:', mergedFileName, filePath)
+
+          if (isImageRef.current) {
+            const imageUrl = `${BASE_URL}${filePath}`
+            setSelectedImages((prev) => [...prev, imageUrl])
+          }
+
+          message.success('文件上传完成！')
+        } else {
+          message.error('部分分片上传失败，请重试')
+        }
       }
-    } catch (error) {
-      console.log('error', error)
+    } catch (error: any) {
+      console.log('上传过程出错:', error)
+      message.error('文件上传失败')
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const uploadChunks = async (
-    fileChunks: chunkItemType[],
-    fileId: string,
-    name: string,
-    chunkHashVals: string[],
-    uploaded: number[],
-    controller: AbortController
-  ) => {
-    const promisesList = fileChunks
-      .filter((_, idx) => !uploaded.includes(idx))
-      .map((chunk, index) => {
-        const fd = new FormData()
-        fd.append('fileId', fileId)
-        fd.append('fileName', name)
-        fd.append('index', String(index))
-        fd.append('chunkHash', chunkHashVals[index])
-        fd.append('chunk', chunk.file)
-
-        return postFileChunksAPI(fd, controller.signal)
-      })
-
-    try {
-      await Promise.all(promisesList)
-
-      const {
-        data: { fileName, filePath }
-      } = await postMergeFileAPI({
-        fileId,
-        fileName: name,
-        totalChunks: fileChunks.length
-      })
-      // 做后续的存储操作 - 如果需要的话
-      console.log('fileName, filePath', fileName, filePath)
-      if (isImageRef.current) {
-        const imageUrl = `${BASE_URL}${filePath}` // 之后需要替换为API给的url
-        setSelectedImages((prev) => [...prev, imageUrl])
-      }
-    } catch (_) {
-      console.log('err', '分片上传失败')
+      uploadedChunksRef.current = []
+      fileChunksRef.current = []
     }
   }
 
@@ -194,19 +284,34 @@ const AIRichInput = () => {
       abortControllerRef.current.abort() // 取消所有分片请求
       abortControllerRef.current = null
     }
+    setIsLoading(false)
+    uploadedChunksRef.current = []
+    fileChunksRef.current = []
+    message.info('文件上传已取消')
   }
 
-  const sendMessage = async (chatId: string, message: string, images?: string[]) => {
+  const sendMessage = async (
+    chatId: string,
+    message: string,
+    images?: string[],
+    fileId?: string
+  ) => {
     await sendChatMessage({
       id: chatId,
       message,
-      imgUrl: images
+      imgUrl: images,
+      fileId
     }).finally(() => {
       setSelectedImages([])
     })
   }
 
-  const createSSEAndSendMessage = (chatId: string, message: string, images?: string[]) => {
+  const createSSEAndSendMessage = (
+    chatId: string,
+    message: string,
+    images?: string[],
+    fileId?: string
+  ) => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close()
     }
@@ -224,7 +329,7 @@ const AIRichInput = () => {
           setInputLoading(false)
           content = ''
         } else if (data.type === 'error') {
-          console.log('err', data.content)
+          console.error('SSE连接错误:', data.error)
         }
       } catch (error) {
         console.log('解析消息失败', error)
@@ -237,7 +342,7 @@ const AIRichInput = () => {
       eventSourceRef.current = null
     }
 
-    sendMessage(chatId, message, images)
+    sendMessage(chatId, message, images, fileId)
   }
 
   const submitMessage = async (message: string) => {
@@ -251,48 +356,56 @@ const AIRichInput = () => {
       addConversation({ id, title })
     }
 
-    // 构建消息内容
-    // let messageContent: MessageContent[]
-
-    // 如果有图片或者需要混合内容
-    // if (selectedImages.length > 0) {
-    const contentArray: MessageContent[] = []
-
-    // 添加文本内容
-    if (message.trim()) {
-      contentArray.push({
-        type: 'text',
-        content: message
-      })
-    }
+    if (message)
+      if (message.trim()) {
+        // 添加文本内容
+        addMessage({
+          content: [
+            {
+              type: 'text',
+              content: message
+            }
+          ],
+          role: 'user'
+        })
+      }
 
     // 添加图片内容
-    selectedImages.forEach((imageUrl) => {
-      contentArray.push({
-        type: 'image',
-        content: imageUrl
+    selectedImages?.forEach((imageUrl) => {
+      addMessage({
+        content: [
+          {
+            type: 'image',
+            content: imageUrl
+          }
+        ],
+        role: 'image'
       })
     })
 
-    // messageContent = contentArray
-    // }
-    // else {
-    //   // 纯文本消息
-    //   messageContent = message
-    // }
-    const ans: MessageProps = {
-      content: contentArray,
-      role: 'user'
+    // 添加文件内容
+    if (fileIdRef.current) {
+      addMessage({
+        content: [
+          {
+            type: 'file',
+            content: {
+              uid: fileIdRef.current,
+              name: fileNameRef.current!
+            }
+          }
+        ],
+        role: 'file'
+      })
     }
-    // 发送用户消息
-    addMessage(ans)
 
     if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
       createSSEAndSendMessage(
         idRef.current || (selectedId as string),
         message,
-        selectedImages.length > 0 ? selectedImages : undefined
+        selectedImages.length > 0 ? selectedImages : undefined,
+        fileIdRef.current ? fileIdRef.current : undefined
       )
     }
   }
@@ -314,7 +427,8 @@ const AIRichInput = () => {
           <span
             style={{
               fontSize: '12px',
-              color: '#ff4f39'
+              color: '#ff4f39',
+              cursor: 'pointer'
             }}
             onClick={cancleUpload}>
             点击取消

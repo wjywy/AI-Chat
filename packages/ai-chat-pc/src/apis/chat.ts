@@ -9,11 +9,7 @@ import { BASE_URL } from '@pc/constant'
 /**
  * 检查已上传的文件分片
  */
-export const getCheckFileAPI = (
-  fileId: string,
-  fileName: string,
-  chatId: string = 'c76582be-be52-4bec-a071-3f059d2bad6e'
-) => {
+export const getCheckFileAPI = (fileId: string, fileName: string, chatId?: string) => {
   return request<checkRespType>(
     `/file/check?fileId=${fileId}&fileName=${fileName}&chatId=${chatId}`
   )

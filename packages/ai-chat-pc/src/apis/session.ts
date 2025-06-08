@@ -75,7 +75,8 @@ export const sessionApi = {
             content: '你好，这是一条分享的消息',
             chatId: chatId,
             createdAt: new Date().toISOString(),
-            imgUrl: null
+            imgUrl: null,
+            fileContent: null
           },
           {
             id: '2',
@@ -83,7 +84,8 @@ export const sessionApi = {
             content: '你好！我是AI助手，很高兴为你服务。这是一个分享的会话示例。',
             chatId: chatId,
             createdAt: new Date().toISOString(),
-            imgUrl: null
+            imgUrl: null,
+            fileContent: null
           }
         ]
       }

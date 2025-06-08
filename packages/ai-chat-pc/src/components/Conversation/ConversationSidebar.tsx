@@ -83,27 +83,67 @@ export function ConversationSidebar() {
     const { data } = await sessionApi.getChatHistory(id)
 
     data.forEach((message) => {
-      const contentArray: MessageContent[] = []
+      // 对图片做处理
       if (message.imgUrl) {
         message.imgUrl.forEach((url) => {
-          contentArray.push({
-            type: 'image',
-            content: url
+          addMessage({
+            content: [
+              {
+                type: 'image',
+                content: url
+              }
+            ],
+            role: 'image'
           })
         })
       }
 
-      contentArray.push({
-        type: 'text',
-        content: message.content
-      })
-
-      const ans: MessageProps = {
-        content: contentArray,
-        role: message.role
+      // 对文件做处理
+      if (message.fileContent) {
+        message.fileContent
+          .filter((file) => {
+            // 定义图片文件扩展名
+            const imageExtensions = [
+              '.jpg',
+              '.jpeg',
+              '.png',
+              '.gif',
+              '.bmp',
+              '.webp',
+              '.svg',
+              '.ico',
+              '.tiff',
+              '.tif'
+            ]
+            const fileName = file.fileName.toLowerCase()
+            // 过滤掉图片文件
+            return !imageExtensions.some((ext) => fileName.endsWith(ext))
+          })
+          .forEach((file) => {
+            addMessage({
+              content: [
+                {
+                  type: 'file',
+                  content: {
+                    uid: file.fileId,
+                    name: file.fileName
+                  }
+                }
+              ],
+              role: 'file'
+            })
+          })
       }
 
-      addMessage(ans)
+      addMessage({
+        content: [
+          {
+            type: 'text',
+            content: message.content
+          }
+        ],
+        role: message.role
+      })
     })
   }
 
