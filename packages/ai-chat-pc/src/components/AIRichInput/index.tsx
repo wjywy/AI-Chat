@@ -5,7 +5,7 @@ import { LinkOutlined } from '@ant-design/icons'
 import { Attachments, Sender } from '@ant-design/x'
 import { Button, message, Spin, type GetRef } from 'antd'
 
-import { useChatStore, useConversationStore, type MessageProps } from '@pc/store'
+import { useChatStore, useConversationStore } from '@pc/store'
 import {
   createSSE,
   getCheckFileAPI,
@@ -14,8 +14,6 @@ import {
   sendChatMessage
 } from '@pc/apis/chat'
 import { sessionApi } from '@pc/apis/session'
-
-import type { MessageContent } from '@pc/types/chat'
 import { BASE_URL, DEFAULT_MESSAGE } from '@pc/constant'
 
 // 切片的大小 - 使用2MB分片大小以提高上传效率

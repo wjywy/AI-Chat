@@ -1,7 +1,8 @@
-import type { FileContent, ImageContent, TextContent, MessageContent } from '@pc/types/chat'
 import { Image } from 'antd'
 import type { ReactElement } from 'react'
 import { Attachments } from '@ant-design/x'
+
+import type { FileContent, ImageContent, TextContent, MessageContent } from '@pc/types/chat'
 
 // 定义内容处理器的类型映射
 type ContentHandlers = {

@@ -5,10 +5,9 @@ import { MoreOutlined, MessageOutlined, SearchOutlined } from '@ant-design/icons
 import { useConversationActions } from './hooks/useConversationActions'
 import { useEffect, useState } from 'react'
 import { sessionApi } from '@pc/apis/session'
-import { type MessageProps, useChatStore } from '@pc/store'
+import { useChatStore } from '@pc/store'
 import { ShareDialog } from './ShareDialog'
 import { SearchButton } from '@pc/components/Search/SearchButton'
-import { type MessageContent } from '@pc/types/chat'
 
 export function ConversationSidebar() {
   const [shareDialogChatId, setShareDialogChatId] = useState<string | null>(null)
