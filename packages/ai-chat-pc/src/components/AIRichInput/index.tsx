@@ -2,7 +2,7 @@ import { LinkOutlined } from '@ant-design/icons'
 import { Attachments, Sender } from '@ant-design/x'
 import { Button, message, Spin, type GetRef } from 'antd'
 import React from 'react'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import SparkMD5 from 'spark-md5'
 
 import {
@@ -32,6 +32,7 @@ const AIRichInput = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [inputLoading, setInputLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [text, setText] = useState('')
   const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
   const senderRef = useRef<GetRef<typeof Sender>>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -46,6 +47,43 @@ const AIRichInput = () => {
   const { selectedId, setSelectedId, addConversation } = useConversationStore()
   const [selectedImages, setSelectedImages] = useState<string[]>([])
   const isImageRef = useRef(false)
+
+  // 监听selectedId变化，重置组件状态
+  useEffect(() => {
+    console.log('selectedId变化', selectedId)
+    // 当切换会话时，清理当前组件的状态
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close()
+      eventSourceRef.current = null
+    }
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+
+    // 重置所有状态
+    setSelectedImages([])
+    setIsLoading(false)
+    setInputLoading(false)
+    setOpen(false)
+    uploadedChunksRef.current = []
+    fileChunksRef.current = []
+    fileIdRef.current = null
+    fileNameRef.current = null
+    idRef.current = null
+    isImageRef.current = false
+
+    // 清理附件组件的状态
+    if (attachmentsRef.current) {
+      // 如果Attachments组件有清理方法，可以在这里调用
+    }
+
+    // 清理Sender组件的输入内容
+    if (senderRef.current) {
+      // 如果Sender组件有清理方法，可以在这里调用
+    }
+  }, [selectedId])
 
   // 创建文件分片
   const createFileChunks = (file: File): ChunkInfo[] => {
@@ -297,14 +335,28 @@ const AIRichInput = () => {
     images?: string[],
     fileId?: string
   ) => {
-    await sendChatMessage({
-      id: chatId,
-      message,
-      imgUrl: images,
-      fileId
-    }).finally(() => {
-      setSelectedImages([])
-    })
+    try {
+      await sendChatMessage({
+        id: chatId,
+        message,
+        imgUrl: images,
+        fileId
+      }).finally(() => {
+        setSelectedImages([])
+      })
+    } catch (error) {
+      console.log('发送消息失败', error)
+      addMessage({
+        content: [
+          {
+            type: 'text',
+            content: '发送失败，请重试'
+          }
+        ],
+        role: 'system'
+      })
+      setInputLoading(false)
+    }
   }
 
   const createSSEAndSendMessage = (
@@ -347,25 +399,24 @@ const AIRichInput = () => {
     sendMessage(chatId, message, images, fileId)
   }
 
-  const submitMessage = async (message: string) => {
+  const submitMessage = async (messages: string) => {
     setInputLoading(true)
-    // 新建会话，并将id与会话关联
-    if (!selectedId) {
-      const { data } = await sessionApi.createChat(message || '图片消息')
-      const { id, title } = data
-      idRef.current = id
-      setSelectedId(id)
-      addConversation({ id, title })
-    }
+
+    // 提交后清空状态
+    setSelectedImages([])
+    setText('')
+    fileIdRef.current = null
+    fileNameRef.current = null
+    setOpen(false)
 
     if (message)
-      if (message.trim()) {
+      if (messages.trim()) {
         // 添加文本内容
         addMessage({
           content: [
             {
               type: 'text',
-              content: message
+              content: messages
             }
           ],
           role: 'user'
@@ -401,11 +452,26 @@ const AIRichInput = () => {
       })
     }
 
+    // 如果是刚初始化，就新建会话，并将id与会话关联
+    if (!selectedId) {
+      try {
+        const { data } = await sessionApi.createChat(messages || '图片消息')
+        const { id, title } = data
+        idRef.current = id
+        setSelectedId(id)
+        addConversation({ id, title })
+      } catch (error) {
+        console.log('创建会话失败', error)
+        setInputLoading(false)
+        message.error('创建会话失败')
+      }
+    }
+
     if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
       createSSEAndSendMessage(
         idRef.current || (selectedId as string),
-        message,
+        messages,
         selectedImages.length > 0 ? selectedImages : undefined,
         fileIdRef.current ? fileIdRef.current : undefined
       )
@@ -476,6 +542,8 @@ const AIRichInput = () => {
         className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px] bg-white`}>
         {showDefaultMessage()}
         <Sender
+          value={text}
+          onChange={setText}
           header={senderHeader}
           prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
           onPasteFile={(_, files) => {
@@ -485,7 +553,7 @@ const AIRichInput = () => {
             }
             setOpen(true)
           }}
-          submitType="shiftEnter"
+          submitType="enter"
           placeholder="请输入您的问题"
           loading={inputLoading}
           onSubmit={(message) => submitMessage(message)}

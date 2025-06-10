@@ -14,7 +14,6 @@ interface ConversationState {
   error: string | null
 
   setSelectedId: (id: string | null) => void
-  // createConversation: (title: string) => Promise<Conversation>
   fetchConversations: () => Promise<void>
   addConversation: (conversation: Conversation) => void
   deleteConversation: (id: string) => Promise<void>
