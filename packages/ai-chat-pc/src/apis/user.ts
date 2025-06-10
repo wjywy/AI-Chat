@@ -1,7 +1,8 @@
 import { request } from '@pc/utils'
+
 // 导入Data类型和参数类型
-import type { Data } from '@pc/utils/request'
 import type { LoginParams, RegisterParams, CaptchaParams, UserInfo } from '@pc/types/user'
+import type { Data } from '@pc/utils/request'
 
 // 认证相关接口
 export const authApi = {

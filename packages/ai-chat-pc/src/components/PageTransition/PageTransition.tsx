@@ -1,7 +1,8 @@
 import { useRef } from 'react'
-import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
+
+import type { ReactNode } from 'react'
 
 import '@pc/styles/transition.css'
 

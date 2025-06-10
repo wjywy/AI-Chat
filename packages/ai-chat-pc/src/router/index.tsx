@@ -1,40 +1,14 @@
-// packages/ai-chat-pc/src/router/index.tsx
+import React from 'react'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom'
 
 import App from '@pc/App'
-import Home from '@pc/pages/Home'
-import Login from '@pc/pages/Login'
-import CreateAccount from '@pc/pages/CreateAccount'
-import { SharedChat } from '@pc/pages/SharedChat'
-// import { ConversationDetail } from '@pc/pages/ConversationDetail'
+import { LayoutWithSidebar } from '@pc/components/Layout/LayoutWithSidebar'
 import { PageTransition } from '@pc/components/PageTransition/PageTransition'
 import { WithPermission } from '@pc/components/WithPermission/WithPermission'
-import { LayoutWithSidebar } from '@pc/components/Layout/LayoutWithSidebar'
-
-// 统一的路由配置
-const routes = [
-  {
-    path: '/',
-    element: <Home />,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/login',
-    element: <Login />,
-    meta: {
-      requiresAuth: false
-    }
-  },
-  {
-    path: '/create-account',
-    element: <CreateAccount />,
-    meta: {
-      requiresAuth: false
-    }
-  }
-]
+import CreateAccount from '@pc/pages/CreateAccount'
+import Home from '@pc/pages/Home'
+import Login from '@pc/pages/Login'
+import { SharedChat } from '@pc/pages/SharedChat'
 
 // 创建React Router路由
 const routeElements = createRoutesFromElements(

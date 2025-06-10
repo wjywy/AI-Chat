@@ -1,6 +1,6 @@
-// src/stores/authStore.ts
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 import type { User } from '@pc/types/user'
 
 // 认证状态接口

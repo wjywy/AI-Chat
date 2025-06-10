@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+
 import { sessionApi } from '../apis/session'
 
 type Conversation = {
@@ -29,16 +30,6 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
 
   setSelectedId: (id) => set({ selectedId: id }),
 
-  // createConversation: async (title: string) => {
-  //   const { data } = await sessionApi.createChat(title)
-  //   const conversation = {
-  //     id: data.id,
-  //     title: data.title
-  //   }
-  //   get().addConversation(conversation)
-  //   return conversation
-  // },
-
   fetchConversations: async () => {
     set({ loading: true, error: null })
     try {
@@ -51,6 +42,7 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
         loading: false
       })
     } catch (error) {
+      console.error(error)
       // 添加默认数据
       set({
         conversations: [
@@ -85,6 +77,7 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
         conversations: conversations.filter((c) => c.id !== id)
       })
     } catch (error) {
+      console.error(error)
       set({ error: '删除会话失败' })
     }
   },
@@ -103,6 +96,7 @@ export const useConversationStore = create<ConversationState>()((set, get) => ({
         conversations: get().conversations.map((c) => (c.id === id ? { ...c, ...updates } : c))
       })
     } catch (error) {
+      console.error(error)
       set({ error: '更新会话失败' })
     }
   }

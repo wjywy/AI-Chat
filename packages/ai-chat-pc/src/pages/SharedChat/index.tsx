@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { HomeOutlined, MessageOutlined } from '@ant-design/icons'
 import { Bubble } from '@ant-design/x'
 import { Button, Spin, Result } from 'antd'
-import type { GetProp } from 'antd'
-import { HomeOutlined, MessageOutlined } from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
+
 import { sessionApi } from '@pc/apis/session'
-import type { ChatMessage, ChatSession } from '@pc/types/session'
+
 import type { MessageProps } from '@pc/store/useChatStore'
+import type { ChatSession } from '@pc/types/session'
+import type { GetProp } from 'antd'
 
 export function SharedChat() {
   const { shareId } = useParams()
@@ -28,11 +30,12 @@ export function SharedChat() {
         setConversation(data.conversation)
         setMessages(
           data.messages.map((msg) => ({
-            content: msg.content,
+            content: [{ type: 'text', content: msg.content }],
             role: msg.role
           }))
         )
       } catch (err) {
+        console.error(err)
         setError('获取分享会话失败')
       } finally {
         setLoading(false)

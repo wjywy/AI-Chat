@@ -1,10 +1,12 @@
 import { EventSourcePolyfill } from 'event-source-polyfill'
 
-import type { checkRespType, mergeChunkType, mergeResType, SendMessageType } from '@pc/types/chat'
-import { request } from '@pc/utils/index'
-import { useUserStore } from '@pc/store'
-import { type Data } from '../utils/request'
 import { BASE_URL } from '@pc/constant'
+import { useUserStore } from '@pc/store'
+import { request } from '@pc/utils/index'
+
+import { type Data } from '../utils/request'
+
+import type { checkRespType, mergeChunkType, mergeResType, SendMessageType } from '@pc/types/chat'
 
 /**
  * 检查已上传的文件分片

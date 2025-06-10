@@ -1,8 +1,9 @@
 import { message } from 'antd'
 import axios, { type AxiosError, type Method } from 'axios'
-import { useUserStore } from '@pc/store/useUserStore'
-import router from '@pc/router'
+
 import { BASE_URL } from '@pc/constant'
+import router from '@pc/router'
+import { useUserStore } from '@pc/store/useUserStore'
 
 // 请求实例
 const instance = axios.create({
@@ -85,6 +86,7 @@ export const request = <T>(
   submitData?: object,
   options?: { signal?: AbortSignal }
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return instance.request<any, Data<T>>({
     url,
     method,

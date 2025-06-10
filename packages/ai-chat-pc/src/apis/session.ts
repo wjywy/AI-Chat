@@ -1,6 +1,7 @@
 import { request } from '@pc/utils'
-import type { Data } from '@pc/utils/request'
+
 import type { ChatMessage, ChatSession } from '@pc/types/session'
+import type { Data } from '@pc/utils/request'
 
 export const sessionApi = {
   // 新建会话

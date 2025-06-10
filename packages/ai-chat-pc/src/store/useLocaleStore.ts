@@ -1,10 +1,10 @@
+import enUS from 'antd/locale/en_US'
+import zhCN from 'antd/locale/zh_CN'
+import dayjs from 'dayjs'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import i18n from '@pc/locales'
-import dayjs from 'dayjs'
 
-import zhCN from 'antd/locale/zh_CN'
-import enUS from 'antd/locale/en_US'
+import i18n from '@pc/locales'
 
 export type LocaleType = 'zh-CN' | 'en-US'
 

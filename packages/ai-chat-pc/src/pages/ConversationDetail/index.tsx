@@ -1,7 +1,7 @@
+import { Bubble } from '@ant-design/x'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Bubble } from '@ant-design/x'
-import { useTranslation } from 'react-i18next'
+
 import AIRichInput from '@pc/components/AIRichInput'
 import { useConversationStore, useChatStore } from '@pc/store'
 
@@ -14,7 +14,6 @@ export function ConversationDetail() {
   const { id } = useParams()
   const { conversations } = useConversationStore()
   const { messages } = useChatStore()
-  const { t } = useTranslation()
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
 
   useEffect(() => {

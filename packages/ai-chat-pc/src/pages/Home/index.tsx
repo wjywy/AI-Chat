@@ -1,5 +1,5 @@
-import { ChatBubble } from '@pc/components/Bubble/bubble'
 import AIRichInput from '@pc/components/AIRichInput'
+import { ChatBubble } from '@pc/components/Bubble/bubble'
 
 const Home = () => {
   return (

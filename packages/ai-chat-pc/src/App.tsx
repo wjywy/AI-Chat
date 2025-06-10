@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
 import { XProvider } from '@ant-design/x'
-import { Outlet, useNavigate } from 'react-router-dom'
 import { ConfigProvider, theme as antdTheme } from 'antd'
+import { useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 import '@pc/locales'
 import ThemeToggle from '@pc/components/ThemeToggle'

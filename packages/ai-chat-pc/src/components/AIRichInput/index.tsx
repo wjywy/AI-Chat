@@ -1,11 +1,10 @@
-import SparkMD5 from 'spark-md5'
-import { useRef, useState } from 'react'
-import type { RcFile } from 'antd/es/upload'
 import { LinkOutlined } from '@ant-design/icons'
 import { Attachments, Sender } from '@ant-design/x'
 import { Button, message, Spin, type GetRef } from 'antd'
+import React from 'react'
+import { useRef, useState } from 'react'
+import SparkMD5 from 'spark-md5'
 
-import { useChatStore, useConversationStore } from '@pc/store'
 import {
   createSSE,
   getCheckFileAPI,
@@ -15,6 +14,9 @@ import {
 } from '@pc/apis/chat'
 import { sessionApi } from '@pc/apis/session'
 import { BASE_URL, DEFAULT_MESSAGE } from '@pc/constant'
+import { useChatStore, useConversationStore } from '@pc/store'
+
+import type { RcFile } from 'antd/es/upload'
 
 // 切片的大小 - 使用2MB分片大小以提高上传效率
 const CHUNK_SIZE = 1024 * 1024 * 2
@@ -142,6 +144,7 @@ const AIRichInput = () => {
       } else {
         return false
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.name === 'AbortError') {
         return false
@@ -260,7 +263,7 @@ const AIRichInput = () => {
           message.error('部分分片上传失败，请重试')
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log('上传过程出错:', error)
       message.error('文件上传失败')
     } finally {
@@ -315,6 +318,7 @@ const AIRichInput = () => {
     }
 
     eventSourceRef.current = createSSE(chatId)
+    // eslint-disable-next-line unused-imports/no-unused-vars
     let content = ''
     eventSourceRef.current.onmessage = (event) => {
       try {
@@ -467,7 +471,7 @@ const AIRichInput = () => {
   }
 
   return (
-    <>
+    <React.Fragment>
       <div
         className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px] bg-white`}>
         {showDefaultMessage()}
@@ -487,7 +491,7 @@ const AIRichInput = () => {
           onSubmit={(message) => submitMessage(message)}
         />
       </div>
-    </>
+    </React.Fragment>
   )
 }
 

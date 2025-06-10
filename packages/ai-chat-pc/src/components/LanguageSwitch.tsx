@@ -1,7 +1,7 @@
-import React from 'react'
-import { type MenuProps, Dropdown, Button, Space } from 'antd'
-import { useTranslation } from 'react-i18next'
 import { GlobalOutlined, DownOutlined } from '@ant-design/icons'
+import { type MenuProps, Dropdown, Button, Space } from 'antd'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useLocaleStore, type LocaleType } from '@pc/store'
 

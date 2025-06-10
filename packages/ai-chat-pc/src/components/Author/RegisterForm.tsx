@@ -71,6 +71,7 @@ export default function RegisterForm({
         }
       }, 1000)
     } catch (error) {
+      console.error('发送验证码失败:', error)
       setError(t('form.captchaSendFailed'))
     }
   }

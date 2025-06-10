@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useUserStore } from '@pc/store/useUserStore'
-import { userService } from '@pc/services/userService'
-import AuthLink from '@pc/components/Author/AuthLink'
+import AuthLanguageSwitch from '@pc/components/Author/AuthLanguageSwitch'
 import AuthLayout from '@pc/components/Author/AuthLayout'
+import AuthLink from '@pc/components/Author/AuthLink'
 import FooterLinks from '@pc/components/Author/FooterLinks'
 import RegisterForm from '@pc/components/Author/RegisterForm'
-import AuthLanguageSwitch from '@pc/components/Author/AuthLanguageSwitch'
+import { userService } from '@pc/services/userService'
+import { useUserStore } from '@pc/store/useUserStore'
 
 import type { RegisterParams, CaptchaParams } from '@pc/types/user'
 

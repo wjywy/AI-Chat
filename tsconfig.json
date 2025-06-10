@@ -1,0 +1,5 @@
+{
+  "files": [],
+  "references": [{ "path": "./packages/ai-chat-pc" }, { "path": "./packages/ai-chat-plug" }]
+}
+

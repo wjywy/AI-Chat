@@ -1,13 +1,14 @@
-import { Dropdown, Input } from 'antd'
-import { useNavigate } from 'react-router-dom'
 import { MoreOutlined, MessageOutlined, SearchOutlined } from '@ant-design/icons'
+import { Dropdown, Input } from 'antd'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import { sessionApi } from '@pc/apis/session'
+import { SearchButton } from '@pc/components/Search/SearchButton'
+import { useChatStore } from '@pc/store'
 
 import { useConversationActions } from './hooks/useConversationActions'
-import { useEffect, useState } from 'react'
-import { sessionApi } from '@pc/apis/session'
-import { useChatStore } from '@pc/store'
 import { ShareDialog } from './ShareDialog'
-import { SearchButton } from '@pc/components/Search/SearchButton'
 
 export function ConversationSidebar() {
   const [shareDialogChatId, setShareDialogChatId] = useState<string | null>(null)
@@ -42,6 +43,7 @@ export function ConversationSidebar() {
     {
       key: 'rename',
       label: '重命名',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onClick: (e: any) => {
         e.domEvent.stopPropagation()
         startEdit(id, title)
@@ -50,6 +52,7 @@ export function ConversationSidebar() {
     {
       key: 'share',
       label: '分享',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onClick: (e: any) => {
         e.domEvent.stopPropagation()
         handleShare(id)
@@ -59,6 +62,7 @@ export function ConversationSidebar() {
       key: 'delete',
       label: '删除',
       danger: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onClick: (e: any) => {
         e.domEvent.stopPropagation()
         handleDelete(id)

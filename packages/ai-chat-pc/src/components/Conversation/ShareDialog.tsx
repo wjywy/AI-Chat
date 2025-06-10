@@ -1,8 +1,9 @@
-import { message, Modal, Button } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
+import { message, Modal, Button } from 'antd'
 import { useState, useEffect } from 'react'
-import { sessionApi } from '@pc/apis/session'
 import { useNavigate } from 'react-router-dom'
+
+import { sessionApi } from '@pc/apis/session'
 
 interface ShareDialogProps {
   chatId: string | null
@@ -31,6 +32,7 @@ export function ShareDialog({ chatId, onClose }: ShareDialogProps) {
       const shareLink = `${window.location.origin}/shared/${data.shareId}`
       setShareLink(shareLink)
     } catch (error) {
+      console.error(error)
       message.error('生成分享链接失败')
     } finally {
       setLoading(false)

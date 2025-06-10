@@ -1,6 +1,7 @@
-import { Button, Space } from 'antd'
-import { useTranslation } from 'react-i18next'
 import { GlobalOutlined } from '@ant-design/icons'
+import { Button, Space } from 'antd'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useLocaleStore } from '@pc/store'
 

@@ -1,6 +1,6 @@
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 
 import { UserAvatar } from '@pc/components/Author/UserAvatar'
 import { ConversationSidebar } from '@pc/components/Conversation/ConversationSidebar'

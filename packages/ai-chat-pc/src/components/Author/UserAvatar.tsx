@@ -1,11 +1,12 @@
-import { useState } from 'react'
-import type { MenuProps } from 'antd/lib'
-import { useNavigate } from 'react-router-dom'
-import { Avatar, Dropdown, Button, Modal, message } from 'antd'
 import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons'
+import { Avatar, Dropdown, Button, Modal, message } from 'antd'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { useUserStore } from '@pc/store/useUserStore'
 import { userService } from '@pc/services/userService'
+import { useUserStore } from '@pc/store/useUserStore'
+
+import type { MenuProps } from 'antd/lib'
 
 export function UserAvatar() {
   const { isAuthenticated, user } = useUserStore()

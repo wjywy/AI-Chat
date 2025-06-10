@@ -3,23 +3,21 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { userService } from '@pc/services/userService'
-import { useUserStore } from '@pc/store/useUserStore'
+import AuthLanguageSwitch from '@pc/components/Author/AuthLanguageSwitch'
+import AuthLayout from '@pc/components/Author/AuthLayout'
 import AuthLink from '@pc/components/Author/AuthLink'
 import EmailForm from '@pc/components/Author/EmailForm'
-import AuthLayout from '@pc/components/Author/AuthLayout'
 import FooterLinks from '@pc/components/Author/FooterLinks'
-import AuthLanguageSwitch from '@pc/components/Author/AuthLanguageSwitch'
+import { userService } from '@pc/services/userService'
 
 import type { LoginParams } from '@pc/types/user'
 
 export default function Login() {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [_, setError] = useState<string | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
-  const storeError = useUserStore((state) => state.error)
 
   // 获取之前尝试访问的路径
   const from = location.state?.from || '/'

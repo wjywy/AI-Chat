@@ -1,7 +1,7 @@
-import React from 'react'
-import { FloatButton, Tooltip } from 'antd'
-import { useTranslation } from 'react-i18next'
 import { BulbOutlined, BulbFilled } from '@ant-design/icons'
+import { FloatButton, Tooltip } from 'antd'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useThemeStore } from '@pc/store'
 

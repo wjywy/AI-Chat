@@ -1,7 +1,9 @@
 import { create } from 'zustand'
+
 import { useConversationStore } from './useConversationStore'
-import type { Role } from '@pc/types/common'
+
 import type { MessageContent } from '@pc/types/chat'
+import type { Role } from '@pc/types/common'
 
 export type MessageProps = {
   content: MessageContent[] // 兼容旧格式
@@ -16,7 +18,7 @@ export interface ChatStoreProps {
   addChunkMessage: (chunk: string) => void
 }
 
-export const useChatStore = create<ChatStoreProps>((set, get) => ({
+export const useChatStore = create<ChatStoreProps>((set) => ({
   messages: new Map(),
   addMessage: ({ content, role }: MessageProps) => {
     const { selectedId } = useConversationStore.getState() // 获取实时的 selectedId

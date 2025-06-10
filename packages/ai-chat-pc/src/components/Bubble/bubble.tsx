@@ -1,12 +1,13 @@
-import { useRef } from 'react'
-import { Bubble } from '@ant-design/x'
-import type { GetProp, GetRef } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
+import { Bubble } from '@ant-design/x'
+import { useRef } from 'react'
 
 import { useChatStore, useConversationStore } from '@pc/store'
 
-import type { MessageContent } from '@pc/types/chat'
 import { allMessageContent } from './content'
+
+import type { MessageContent } from '@pc/types/chat'
+import type { GetProp, GetRef } from 'antd'
 import './bubble.css' // 添加CSS导入
 
 export const ChatBubble = () => {
@@ -47,6 +48,7 @@ export const ChatBubble = () => {
     return content.map((item, index) => {
       return (
         <div key={index}>
+          {/*  eslint-disable-next-line @typescript-eslint/no-explicit-any*/}
           {allMessageContent[item.type as keyof typeof allMessageContent](item as any)}
         </div>
       )

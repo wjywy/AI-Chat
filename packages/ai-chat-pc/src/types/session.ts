@@ -1,5 +1,3 @@
-import type { FileContent } from './chat'
-
 // 定义会话对象类型
 export interface ChatSession {
   id: string // 注意：接口文档中id是string类型，而之前我们前端使用的是number，这里统一为string
