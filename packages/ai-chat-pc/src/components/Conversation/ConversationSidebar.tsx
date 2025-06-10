@@ -150,16 +150,16 @@ export function ConversationSidebar() {
     <div className="p-4">
       <div className="mb-4 flex flex-col gap-2">
         <button
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors w-full"
           onClick={() => handleAddConversation()}>
           <MessageOutlined />
-          <span>开启新对话</span>
+          <span>新对话</span>
         </button>
         <button
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors w-full"
           onClick={() => setIsSearchOpen(true)}>
           <SearchOutlined />
-          <span>搜索聊天记录</span>
+          <span>搜索记录</span>
         </button>
         <SearchButton isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       </div>
@@ -167,7 +167,9 @@ export function ConversationSidebar() {
         {conversations.map((conv) => (
           <li
             key={conv.id}
-            className={`p-2 hover:bg-gray-100 rounded cursor-pointer flex justify-between items-center ${selectedId === conv.id ? 'bg-blue-50' : ''}`}
+            className={`p-2 hover:bg-gray-100 rounded cursor-pointer flex justify-between items-center ${
+              selectedId === conv.id ? 'bg-gray-200' : ''
+            }`}
             onClick={() => handleConversationClick(conv.id)}>
             {editingId === conv.id ? (
               <Input
@@ -178,10 +180,13 @@ export function ConversationSidebar() {
                 autoFocus
               />
             ) : (
-              <div className="truncate">{conv.title}</div>
+              <div className="truncate text-gray-700">{conv.title}</div>
             )}
             <Dropdown menu={{ items: items(conv.id, conv.title) }} trigger={['click']}>
-              <MoreOutlined className="ml-2" onClick={(e) => e.stopPropagation()} />
+              <MoreOutlined
+                className="ml-2 text-gray-500 hover:text-gray-700"
+                onClick={(e) => e.stopPropagation()}
+              />
             </Dropdown>
           </li>
         ))}

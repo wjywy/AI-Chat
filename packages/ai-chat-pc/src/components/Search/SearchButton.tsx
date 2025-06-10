@@ -64,20 +64,35 @@ export const SearchButton = ({ isOpen, onClose }: SearchButtonProps) => {
             <h3 className="text-lg font-medium dark:text-white">搜索聊天记录</h3>
           </div>
           <div className="p-4">
+            <style>
+              {`
+                .search-sender.ant-x-sender {
+                  border: 1px solid #E5E7EB !important;
+                  border-radius: 0.5rem !important;
+                  box-shadow: none !important;
+                }
+                .search-sender.ant-x-sender:hover {
+                  border-color: #9CA3AF !important;
+                }
+                .search-sender.ant-x-sender:focus-within {
+                  border-color: #6B7280 !important;
+                }
+                .search-sender .ant-x-sender-submit {
+                  background-color: transparent !important;
+                  border: none !important;
+                  color: #6B7280 !important;
+                }
+                .search-sender .ant-x-sender-submit:hover {
+                  background-color: #F3F4F6 !important;
+                  color: #374151 !important;
+                }
+              `}
+            </style>
             <Sender
               placeholder="搜索聊天记录..."
               onSubmit={handleSubmit}
-              prefix={<SearchOutlined />}
-              styles={{
-                input: {
-                  fontSize: '1.125rem',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  boxShadow: 'none',
-                  color: isDark ? '#e5e7eb' : 'inherit'
-                }
-              }}
+              prefix={<SearchOutlined className="text-gray-500" />}
+              className="search-sender"
             />
           </div>
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 max-h-[400px] overflow-y-auto">

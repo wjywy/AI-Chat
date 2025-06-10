@@ -471,12 +471,38 @@ const AIRichInput = () => {
       <div
         className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px] bg-white`}>
         {showDefaultMessage()}
+        <style>
+          {`
+            .chat-input .ant-x-sender {
+              border: none !important;
+              box-shadow: none !important;
+            }
+            .chat-input .ant-x-sender:hover, .chat-input .ant-x-sender:focus-within {
+              border: none !important;
+              box-shadow: none !important;
+            }
+            .chat-input .ant-x-sender-submit {
+              background-color: transparent !important;
+              border: none !important;
+              color: #6B7280 !important;
+            }
+            .chat-input .ant-x-sender-submit:hover {
+              background-color: #F3F4F6 !important;
+              color: #374151 !important;
+            }
+          `}
+        </style>
         <Sender
           header={senderHeader}
-          prefix={<Button type="text" icon={<LinkOutlined />} onClick={() => setOpen(!open)} />}
+          prefix={
+            <Button
+              type="text"
+              icon={<LinkOutlined className="text-gray-500 hover:text-gray-700" />}
+              onClick={() => setOpen(!open)}
+            />
+          }
           onPasteFile={(_, files) => {
             for (const file of files) {
-              // 生成base64临时图片路径
               attachmentsRef.current?.upload(file)
             }
             setOpen(true)
@@ -485,6 +511,7 @@ const AIRichInput = () => {
           placeholder="请输入您的问题"
           loading={inputLoading}
           onSubmit={(message) => submitMessage(message)}
+          className="!border-0 !shadow-none hover:!border-0 focus:!border-0 focus:!shadow-none chat-input"
         />
       </div>
     </>
