@@ -467,7 +467,8 @@ const AIRichInput = () => {
   }
 
   return (
-    <div
+    <>
+      <div
         className={`fixed w-1/2 z-50 ${!selectedId ? 'bottom-1/2' : 'bottom-0'} pb-[30px] bg-white`}>
         {showDefaultMessage()}
         <Sender
