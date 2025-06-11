@@ -7,6 +7,8 @@ import { sessionApi } from '@pc/apis/session'
 import { SearchButton } from '@pc/components/Search/SearchButton'
 import { useChatStore } from '@pc/store'
 
+import { isImageByExtension } from '../../utils/judgeImage'
+
 import { useConversationActions } from './hooks/useConversationActions'
 import { ShareDialog } from './ShareDialog'
 
@@ -86,7 +88,7 @@ export function ConversationSidebar() {
     const { data } = await sessionApi.getChatHistory(id)
 
     data.forEach((message) => {
-      // 对图片做处理
+      // 对图片做处理，现在讲图片归类为文件了，测试之后待删
       if (message.imgUrl) {
         message.imgUrl.forEach((url) => {
           addMessage({
@@ -103,26 +105,18 @@ export function ConversationSidebar() {
 
       // 对文件做处理
       if (message.fileContent) {
-        message.fileContent
-          .filter((file) => {
-            // 定义图片文件扩展名
-            const imageExtensions = [
-              '.jpg',
-              '.jpeg',
-              '.png',
-              '.gif',
-              '.bmp',
-              '.webp',
-              '.svg',
-              '.ico',
-              '.tiff',
-              '.tif'
-            ]
-            const fileName = file.fileName.toLowerCase()
-            // 过滤掉图片文件
-            return !imageExtensions.some((ext) => fileName.endsWith(ext))
-          })
-          .forEach((file) => {
+        message.fileContent.forEach((file) => {
+          if (isImageByExtension(file.fileName)) {
+            addMessage({
+              content: [
+                {
+                  type: 'image',
+                  content: file.fileName
+                }
+              ],
+              role: 'image'
+            })
+          } else {
             addMessage({
               content: [
                 {
@@ -135,7 +129,8 @@ export function ConversationSidebar() {
               ],
               role: 'file'
             })
-          })
+          }
+        })
       }
 
       addMessage({

@@ -28,7 +28,7 @@ export type mergeResType = {
 export type SendMessageType = {
   id: string
   message: string
-  imgUrl?: string[]
+  // imgUrl?: string[]
   fileId?: string
 }
 

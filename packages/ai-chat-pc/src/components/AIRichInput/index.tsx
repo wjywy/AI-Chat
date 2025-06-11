@@ -15,6 +15,7 @@ import {
 import { sessionApi } from '@pc/apis/session'
 import { BASE_URL, DEFAULT_MESSAGE } from '@pc/constant'
 import { useChatStore, useConversationStore } from '@pc/store'
+import { isImageByExtension } from '@pc/utils/judgeImage'
 
 import type { RcFile } from 'antd/es/upload'
 
@@ -41,11 +42,13 @@ const AIRichInput = () => {
   const fileChunksRef = useRef<ChunkInfo[]>([])
   const fileIdRef = useRef<string | null>(null)
   const fileNameRef = useRef<string | null>(null)
+  const filePathRef = useRef<string | null>(null)
 
   const { messages, addMessage, addChunkMessage } = useChatStore()
   const { selectedId, setSelectedId, addConversation } = useConversationStore()
-  const [selectedImages, setSelectedImages] = useState<string[]>([])
-  const isImageRef = useRef(false)
+  // const [selectedImages, setSelectedImages] = useState<string[]>([])
+
+  // const isImageRef = useRef(false)
 
   // 创建文件分片
   const createFileChunks = (file: File): ChunkInfo[] => {
@@ -205,11 +208,11 @@ const AIRichInput = () => {
       setIsLoading(true)
 
       // 判断是否为图片文件
-      if (file.type.startsWith('image/')) {
-        isImageRef.current = true
-      } else {
-        isImageRef.current = false
-      }
+      // if (file.type.startsWith('image/')) {
+      //   isImageRef.current = true
+      // } else {
+      //   isImageRef.current = false
+      // }
 
       const controller = new AbortController()
       abortControllerRef.current = controller
@@ -225,11 +228,12 @@ const AIRichInput = () => {
 
       // 分片上传前的校验
       const {
-        data: { fileStatus, uploaded }
+        data: { fileStatus, uploaded, filePath }
       } = await getCheckFileAPI(fileId, file.name, selectedId ? selectedId : '')
 
       if (fileStatus === 1) {
         message.success('文件上传成功')
+        filePathRef.current = filePath || ''
         return
       } else {
         // 上传分片
@@ -253,10 +257,11 @@ const AIRichInput = () => {
 
           console.log('文件合并成功:', mergedFileName, filePath)
 
-          if (isImageRef.current) {
-            const imageUrl = `${BASE_URL}${filePath}`
-            setSelectedImages((prev) => [...prev, imageUrl])
-          }
+          filePathRef.current = filePath
+          // if (isImageRef.current) {
+          //   const imageUrl = `${BASE_URL}${filePath}`
+          //   setSelectedImages((prev) => [...prev, imageUrl])
+          // }
 
           message.success('文件上传完成！')
         } else {
@@ -294,25 +299,27 @@ const AIRichInput = () => {
   const sendMessage = async (
     chatId: string,
     message: string,
-    images?: string[],
+    // images?: string[],
     fileId?: string
   ) => {
     await sendChatMessage({
       id: chatId,
       message,
-      imgUrl: images,
+      // imgUrl: images,
       fileId
-    }).finally(() => {
-      setSelectedImages([])
     })
+    // .finally(() => {
+    //   setSelectedImages([])
+    // })
   }
 
   const createSSEAndSendMessage = (
     chatId: string,
     message: string,
-    images?: string[],
+    // images?: string[],
     fileId?: string
   ) => {
+    // console.log('images', fileId, images)
     if (eventSourceRef.current) {
       eventSourceRef.current.close()
     }
@@ -344,7 +351,8 @@ const AIRichInput = () => {
       eventSourceRef.current = null
     }
 
-    sendMessage(chatId, message, images, fileId)
+    // sendMessage(chatId, message, images, fileId)
+    sendMessage(chatId, message, fileId)
   }
 
   const submitMessage = async (message: string) => {
@@ -356,6 +364,36 @@ const AIRichInput = () => {
       idRef.current = id
       setSelectedId(id)
       addConversation({ id, title })
+    }
+
+    // 添加文件内容
+    if (fileIdRef.current) {
+      const fileIsImage = isImageByExtension(fileNameRef.current!)
+      console.log(`${BASE_URL}${fileNameRef.current}`, 'xxxxxxxx')
+      if (fileIsImage) {
+        addMessage({
+          content: [
+            {
+              type: 'image',
+              content: filePathRef.current!
+            }
+          ],
+          role: 'image'
+        })
+      } else {
+        addMessage({
+          content: [
+            {
+              type: 'file',
+              content: {
+                uid: fileIdRef.current,
+                name: fileNameRef.current!
+              }
+            }
+          ],
+          role: 'file'
+        })
+      }
     }
 
     if (message)
@@ -372,41 +410,28 @@ const AIRichInput = () => {
         })
       }
 
+    // console.log('selectedImages', selectedImages)
     // 添加图片内容
-    selectedImages?.forEach((imageUrl) => {
-      addMessage({
-        content: [
-          {
-            type: 'image',
-            content: imageUrl
-          }
-        ],
-        role: 'image'
-      })
-    })
+    // selectedImages?.forEach((imageUrl) => {
+    //   addMessage({
+    //     content: [
+    //       {
+    //         type: 'image',
+    //         content: imageUrl
+    //       }
+    //     ],
+    //     role: 'image'
+    //   })
+    // })
 
-    // 添加文件内容
-    if (fileIdRef.current) {
-      addMessage({
-        content: [
-          {
-            type: 'file',
-            content: {
-              uid: fileIdRef.current,
-              name: fileNameRef.current!
-            }
-          }
-        ],
-        role: 'file'
-      })
-    }
+    // const fileIsImage = validateImageAsync()
 
     if (idRef.current || selectedId) {
       // 建立sse连接，发送消息请求,并展示模型回复
       createSSEAndSendMessage(
         idRef.current || (selectedId as string),
         message,
-        selectedImages.length > 0 ? selectedImages : undefined,
+        // selectedImages.length > 0 ? selectedImages : undefined,
         fileIdRef.current ? fileIdRef.current : undefined
       )
     }
