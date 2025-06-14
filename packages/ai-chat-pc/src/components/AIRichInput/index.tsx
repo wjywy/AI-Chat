@@ -387,7 +387,8 @@ const AIRichInput = () => {
               type: 'file',
               content: {
                 uid: fileIdRef.current,
-                name: fileNameRef.current!
+                name: fileNameRef.current!,
+                path: filePathRef.current!
               }
             }
           ],

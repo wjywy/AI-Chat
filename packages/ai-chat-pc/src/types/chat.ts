@@ -47,6 +47,7 @@ export interface FileContent {
   content: {
     uid: string
     name: string
+    path: string // pdf文件预览路径
     size?: number
   }
 }
