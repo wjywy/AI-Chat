@@ -1,10 +1,10 @@
-import React from 'react'
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom'
 
 import App from '@pc/App'
 import { LayoutWithSidebar } from '@pc/components/Layout/LayoutWithSidebar'
 import { PageTransition } from '@pc/components/PageTransition/PageTransition'
 import { WithPermission } from '@pc/components/WithPermission/WithPermission'
+import Agents from '@pc/pages/Agents'
 import CreateAccount from '@pc/pages/CreateAccount'
 import Home from '@pc/pages/Home'
 import Login from '@pc/pages/Login'
@@ -33,6 +33,7 @@ const routeElements = createRoutesFromElements(
       <Route path="/" element={<Home />} />
       <Route path="/conversation" element={<Home />} />
       <Route path="/conversation/:id" element={<Home />} />
+      <Route path="/agents" element={<Agents />} />
     </Route>
   </Route>
 )

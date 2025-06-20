@@ -1,4 +1,4 @@
-import { MoreOutlined, MessageOutlined, SearchOutlined } from '@ant-design/icons'
+import { MoreOutlined, MessageOutlined, SearchOutlined, RobotOutlined } from '@ant-design/icons'
 import { Dropdown, Input } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -153,6 +153,12 @@ export function ConversationSidebar() {
           onClick={() => handleAddConversation()}>
           <MessageOutlined />
           <span>新对话</span>
+        </button>
+        <button
+          className="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors w-full"
+          onClick={() => navigate('/agents')}>
+          <RobotOutlined />
+          <span>Agent</span>
         </button>
         <button
           className="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors w-full"
