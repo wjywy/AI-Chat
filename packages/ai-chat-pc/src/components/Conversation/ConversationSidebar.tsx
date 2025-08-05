@@ -146,8 +146,8 @@ export function ConversationSidebar() {
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4 flex flex-col gap-2">
+    <div className="flex flex-col h-full overflow-hidden p-4">
+      <div className="flex-shrink-0 mb-4 flex flex-col gap-2">
         <button
           className="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors w-full"
           onClick={() => handleAddConversation()}>
@@ -168,34 +168,36 @@ export function ConversationSidebar() {
         </button>
         <SearchButton isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       </div>
-      <ul className="space-y-2 overflow-hidden text-ellipsis">
-        {conversations.map((conv) => (
-          <li
-            key={conv.id}
-            className={`p-2 hover:bg-gray-100 rounded cursor-pointer flex justify-between items-center ${
-              selectedId === conv.id ? 'bg-gray-200' : ''
-            }`}
-            onClick={() => handleConversationClick(conv.id)}>
-            {editingId === conv.id ? (
-              <Input
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                onPressEnter={() => handleEdit(conv.id)}
-                onBlur={() => handleEdit(conv.id)}
-                autoFocus
-              />
-            ) : (
-              <div className="truncate text-gray-700">{conv.title}</div>
-            )}
-            <Dropdown menu={{ items: items(conv.id, conv.title) }} trigger={['click']}>
-              <MoreOutlined
-                className="ml-2 text-gray-500 hover:text-gray-700"
-                onClick={(e) => e.stopPropagation()}
-              />
-            </Dropdown>
-          </li>
-        ))}
-      </ul>
+      <div className="flex-1 overflow-y-auto">
+        <ul className="space-y-2">
+          {conversations.map((conv) => (
+            <li
+              key={conv.id}
+              className={`p-2 hover:bg-gray-100 rounded cursor-pointer flex justify-between items-center ${
+                selectedId === conv.id ? 'bg-gray-200' : ''
+              }`}
+              onClick={() => handleConversationClick(conv.id)}>
+              {editingId === conv.id ? (
+                <Input
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onPressEnter={() => handleEdit(conv.id)}
+                  onBlur={() => handleEdit(conv.id)}
+                  autoFocus
+                />
+              ) : (
+                <div className="truncate text-gray-700">{conv.title}</div>
+              )}
+              <Dropdown menu={{ items: items(conv.id, conv.title) }} trigger={['click']}>
+                <MoreOutlined
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </Dropdown>
+            </li>
+          ))}
+        </ul>
+      </div>
       <ShareDialog chatId={shareDialogChatId} onClose={() => setShareDialogChatId(null)} />
     </div>
   )

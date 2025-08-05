@@ -9,6 +9,7 @@ import { allMessageContent } from './content'
 import type { MessageContent } from '@pc/types/chat'
 import type { GetProp, GetRef } from 'antd'
 import './bubble.css' // 添加CSS导入
+import 'highlight.js/styles/github.css'
 
 export const ChatBubble = () => {
   const listRef = useRef<GetRef<typeof Bubble.List>>(null)
@@ -19,8 +20,9 @@ export const ChatBubble = () => {
     system: {
       placement: 'start',
       avatar: { icon: <UserOutlined />, style: { background: '#fde3cf' } },
+      variant: 'borderless',
       style: {
-        maxWidth: 600
+        maxWidth: '100%'
       }
     },
     user: {
@@ -64,7 +66,7 @@ export const ChatBubble = () => {
         height: '100%',
         width: '50vw',
         overflowY: 'auto', // 确保可以滚动但滚动条被CSS隐藏
-        paddingBottom: '20%'
+        paddingBottom: '25%'
       }}
       roles={rolesAsObject}
       items={chatMessage?.map((message, index) => ({
