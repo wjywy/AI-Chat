@@ -1,5 +1,7 @@
 import { Attachments } from '@ant-design/x'
 import { Image } from 'antd'
+import markdownit from 'markdown-it'
+import hljs from 'markdown-it-highlightjs'
 
 import type { FileContent, ImageContent, TextContent, MessageContent } from '@pc/types/chat'
 import type { ReactElement } from 'react'
@@ -22,7 +24,23 @@ const fileContent = (data: FileContent): ReactElement => {
 
 const textContent = (data: TextContent): ReactElement => {
   const { content } = data
-  return <div>{content}</div>
+  // 使用 markdown-it 渲染文本内容
+  const md = markdownit({
+    html: true,
+    breaks: true
+  }).use(hljs)
+
+  const html = md.render(content)
+
+  // 处理代码块，添加语言标签
+  const processedHtml = html
+    .replace(
+      /<pre><code class="language-(\w+)">/g,
+      '<pre data-lang="$1"><code class="language-$1">'
+    )
+    .replace(/<pre><code>/g, '<pre data-lang="text"><code>')
+
+  return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: processedHtml }} />
 }
 
 export const allMessageContent: ContentHandlers = {
