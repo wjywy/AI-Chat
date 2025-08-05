@@ -1,3 +1,5 @@
+import Divider from './Divider'
+
 interface SocialLoginButtonsProps {
   onGoogleLogin: () => void
   onMicrosoftLogin: () => void
@@ -103,6 +105,7 @@ export default function SocialLoginButtons({
 
   return (
     <div className="space-y-4">
+      <Divider text="或" />
       {socialButtons.map((button) => (
         <button key={button.name} onClick={button.onClick} type="button" className="social-btn">
           {button.icon}

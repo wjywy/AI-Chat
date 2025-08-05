@@ -8,6 +8,7 @@ import AuthLayout from '@pc/components/Author/AuthLayout'
 import AuthLink from '@pc/components/Author/AuthLink'
 import EmailForm from '@pc/components/Author/EmailForm'
 import FooterLinks from '@pc/components/Author/FooterLinks'
+import SocialLoginButtons from '@pc/components/Author/SocialLoginButtons'
 import { userService } from '@pc/services/userService'
 
 import type { LoginParams } from '@pc/types/user'
@@ -41,6 +42,18 @@ export default function Login() {
     }
   }
 
+  const handleGoogleLogin = () => {
+    console.log('Google登录')
+  }
+
+  const handleMicrosoftLogin = () => {
+    console.log('Microsoft登录')
+  }
+
+  const handleAppleLogin = () => {
+    console.log('Apple登录')
+  }
+
   return (
     <AuthLayout title={t('app.login')}>
       <div className="space-y-4">
@@ -54,6 +67,12 @@ export default function Login() {
         />
 
         <AuthLink isLogin={true} />
+        <SocialLoginButtons
+          onGoogleLogin={handleGoogleLogin}
+          onMicrosoftLogin={handleMicrosoftLogin}
+          onAppleLogin={handleAppleLogin}
+          isLogin={true}
+        />
       </div>
 
       <FooterLinks />
