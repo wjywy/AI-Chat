@@ -1,5 +1,3 @@
-import React from 'react'
-
 import type { ReactNode } from 'react'
 
 interface AuthLayoutProps {
